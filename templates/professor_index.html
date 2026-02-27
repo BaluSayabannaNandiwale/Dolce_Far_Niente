@@ -1,0 +1,54 @@
+{% extends 'professor_dashboard.html' %}
+{% block body %}
+<div class="container-fluid w-100 px-4 pt-3 pb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-block">
+            <h2 class="h5 mb-0 text-dark font-weight-bold">Dashboard <span class="text-muted font-weight-normal">/
+                    Home</span></h2>
+        </div>
+        <div>
+            <span class="badge badge-primary bg-primary px-3 py-2 rounded-pill text-white"
+                style="font-size: 13px; font-weight: 600;"><i class="fas fa-user-shield mr-1"></i> PROFESSOR
+                PORTAL</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row d-flex align-items-center justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card border-light shadow-sm p-4 text-center anim-fade-in">
+                <div class="d-flex justify-content-center mb-4">
+                    <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_wEt2nn.json"
+                        background="transparent" speed="1" style="width: 300px; height: 300px;" loop
+                        autoplay></lottie-player>
+                </div>
+                <div>
+                    <h4 class="mb-3 text-secondary font-weight-normal">Welcome to MyProctor.ai</h4>
+                    <h1 class="mb-0 h3 font-weight-bold">Hi, Professor: {{session.name}}</h1>
+                    <p class="text-muted mt-3">Manage exams, monitor students, and review results with our secure AI
+                        proctoring system.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .anim-fade-in {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

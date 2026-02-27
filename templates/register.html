@@ -1,0 +1,250 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block body %}
+<main>
+  <section class="section-header pb-6 pb-lg-7 bg-white">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-9 col-xl-7">
+          <div class="card shadow-soft border-light p-4 p-lg-5">
+            <div class="card-header bg-white border-0 text-center pb-0">
+              <div class="mb-4">
+                <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                <h1 class="h2 font-weight-bold mb-1">Create an Account</h1>
+                <p class="text-muted">Join NoCheatZone for a secure testing experience</p>
+              </div>
+            </div>
+
+            <div class="card-body pt-2">
+              <form action="{% url 'register' %}" method="POST" class="mt-2" id="registerForm"
+                onsubmit="return validateForm()">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger mb-4 shadow-sm" role="alert" style="border-radius: 12px;">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle mr-3 fa-lg"></i>
+                    <div>
+                      <h6 class="alert-heading mb-1 font-weight-bold">Please correct the following:</h6>
+                      <ul class="mb-0 small pl-3">
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+
+                <div class="row">
+                  <!-- Name Field -->
+                  <div class="col-md-6 mb-4">
+                    <label for="name" class="h6 font-weight-bold">Full Name</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0"><i
+                            class="fas fa-user text-primary"></i></span>
+                      </div>
+                      <input name="name" id="name" class="form-control border-left-0 pl-0" placeholder="John Doe"
+                        type="text" value="{{ form.name.value|default:'' }}" required>
+                    </div>
+                  </div>
+
+                  <!-- Email Field -->
+                  <div class="col-md-6 mb-4">
+                    <label for="email" class="h6 font-weight-bold">Email Address</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0"><i
+                            class="fas fa-envelope text-primary"></i></span>
+                      </div>
+                      <input name="email" id="email" class="form-control border-left-0 pl-0"
+                        placeholder="example@company.com" type="email" value="{{ form.email.value|default:'' }}"
+                        required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <!-- Password Field -->
+                  <div class="col-md-6 mb-4">
+                    <label for="password" class="h6 font-weight-bold">Password</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0"><i
+                            class="fas fa-key text-primary"></i></span>
+                      </div>
+                      <input name="password" id="password" type="password" class="form-control border-left-0 pl-0"
+                        placeholder="Create a password" required>
+                    </div>
+                  </div>
+
+                  <!-- User Type Field -->
+                  <div class="col-md-6 mb-4">
+                    <label for="user_type" class="h6 font-weight-bold">Register as</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0"><i
+                            class="fas fa-users text-primary"></i></span>
+                      </div>
+                      <select class="custom-select border-left-0 pl-0" id="user_type" name="user_type" required>
+                        <option value="student" {% if form.user_type.value == 'student' %}selected{% endif %}>Student
+                        </option>
+                        <option value="teacher" {% if form.user_type.value == 'teacher' %}selected{% endif %}>Professor
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Face Registration Section -->
+                <div class="verification-section mb-4 p-4 bg-light rounded shadow-inner text-center">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0 font-weight-bold text-dark"><i class="fas fa-id-card mr-1"></i> Identity
+                      Registration</h6>
+                    <span class="badge badge-primary px-2 py-1" style="font-size: 10px;">HIGHLY RECOMMENDED</span>
+                  </div>
+
+                  <div class="row align-items-center">
+                    <div class="col-md-6">
+                      <div class="video-container mx-auto mb-3"
+                        style="width: 240px; height: 180px; overflow: hidden; border-radius: 12px; border: 3px solid #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #000;">
+                        <video id="stream" width="240" height="180" autoplay muted playsinline
+                          style="transform: scaleX(-1); object-fit: cover;"></video>
+                        <canvas id="capture" width="240" height="180" style="display:none;"></canvas>
+                      </div>
+                    </div>
+                    <div class="col-md-6 text-md-left">
+                      <p class="small text-muted mb-3">Your face data will be used for continuous proctoring
+                        verification during exams.</p>
+                      <button id="btn-capture" type="button" class="btn btn-sm btn-info shadow-soft">
+                        <i class="fas fa-camera mr-2"></i> Capture Profile Image
+                      </button>
+                    </div>
+                  </div>
+
+                  <div id="snapshot-result" class="mt-4 pt-3 border-top" style="display:none;">
+                    <p class="small text-success mb-2 font-weight-bold"><i class="fas fa-check-circle mr-1"></i>
+                      Bio-metric Data Captured</p>
+                    <div id="snapshot" class="mx-auto"
+                      style="width: 140px; border-radius: 10px; overflow: hidden; border: 3px solid #28a745; box-shadow: 0 4px 10px rgba(40,167,69,0.2);">
+                    </div>
+                  </div>
+
+                  <input type="hidden" id="image_hidden" name="image_hidden"
+                    value="{{ form.image_hidden.value|default:'' }}">
+                  <div id="image-error" class="text-danger mt-2 small font-weight-bold" style="display:none;">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> Please capture your photo for identity
+                    verification.
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-block btn-primary shadow-soft py-3 font-weight-bold mt-4">
+                  <i class="fas fa-user-check mr-2"></i> REGISTER ACCOUNT
+                </button>
+              </form>
+
+              <div class="text-center mt-4 pt-3 border-top">
+                <span class="text-muted">Already have an account? </span>
+                <a href="{% url 'login' %}" class="font-weight-bold text-primary">Sign In here</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  .shadow-inner {
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+    border-color: #31316a;
+  }
+
+  .input-group-text {
+    border-right: none;
+  }
+
+  .form-control {
+    border-left: none;
+  }
+
+  .custom-select {
+    border-left: none;
+  }
+</style>
+
+<script>
+  var btnCapture = document.getElementById("btn-capture");
+  var stream = document.getElementById("stream");
+  var capture = document.getElementById("capture");
+  var snapshot = document.getElementById("snapshot");
+  var snapshotResult = document.getElementById("snapshot-result");
+  var cameraStream = null;
+
+  btnCapture.addEventListener("click", captureSnapshot);
+
+  function startStreaming() {
+    var mediaSupport = 'mediaDevices' in navigator;
+    if (mediaSupport && null == cameraStream) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (mediaStream) {
+          cameraStream = mediaStream;
+          stream.srcObject = mediaStream;
+          stream.play();
+        })
+        .catch(function (err) {
+          console.log("Unable to access camera: " + err);
+        });
+    } else {
+      alert('Your browser does not support media devices.');
+    }
+  }
+
+  function captureSnapshot() {
+    if (null != cameraStream) {
+      var ctx = capture.getContext('2d');
+      ctx.drawImage(stream, 0, 0, capture.width, capture.height);
+
+      var dataURL = capture.toDataURL("image/png");
+      var img = new Image();
+      img.src = dataURL;
+      img.className = "img-fluid";
+
+      snapshot.innerHTML = '';
+      snapshot.appendChild(img);
+      snapshotResult.style.display = 'block';
+
+      var res = dataURL.replace("data:image/png;base64,", "");
+      document.getElementById("image_hidden").value = res;
+      document.getElementById("image-error").style.display = "none";
+    } else {
+      alert("Please wait for camera to load.");
+    }
+  }
+
+  function validateForm() {
+    var imageHidden = document.getElementById("image_hidden").value;
+    if (!imageHidden || imageHidden.trim() === "" || imageHidden.length < 100) {
+      document.getElementById("image-error").style.display = "block";
+      alert("Face registration is required for secure proctoring.");
+      return false;
+    }
+    return true;
+  }
+
+  window.onload = function () {
+    startStreaming();
+  }
+</script>
+{% endblock %}
