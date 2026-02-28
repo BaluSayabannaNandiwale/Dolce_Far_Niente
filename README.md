@@ -1,19 +1,10 @@
-# NocheatZone-AI-BASED-SMART-ONLINE-EXAMINATION-PROCTORING-SYSTEM
 
-# YOUTUBE LINK OF THE PROJECT:
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/E117db5VsTs/0.jpg)](https://youtu.be/E117db5VsTs)
-
-https://youtu.be/E117db5VsTs
-
-# MODEL LINK YOLO V3:
 https://pjreddie.com/media/files/yolov3.weights
 
 # IF YOU ARE LOOKING ONLY FOR PROCTORING REFER THIS LIBRARY:
 ## Package Link: https://pypi.org/project/proctoring/
-## Github Link: https://github.com/narender-rk10/proctoring
 
-# LICENSE:
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
+
 
 ## PROPOSED SYSTEM
 # A) Authentication with Image Verification
@@ -62,9 +53,5 @@ https://pjreddie.com/media/files/yolov3.weights
 7) CUT, COPY, PASTE, Taking Screenshots Function is disabled.
 8) VM detection & Detection of Screen-Sharing applications. [Support Desktop App Only]
 
-# 📈 Star Growth Over Time
-[![GitHub Stars](https://img.shields.io/github/stars/narender-rk10/NocheatZone-AI-BASED-SMART-ONLINE-EXAMINATION-PROCTORING-SYSTEM?style=social)](https://github.com/narender-rk10/NocheatZone-AI-BASED-SMART-ONLINE-EXAMINATION-PROCTORING-SYSTEM/stargazers)
-
-[![Star History Chart](https://api.star-history.com/svg?repos=narender-rk10/NocheatZone-AI-BASED-SMART-ONLINE-EXAMINATION-PROCTORING-SYSTEM&type=Date)](https://star-history.com/#narender-rk10/NocheatZone-AI-BASED-SMART-ONLINE-EXAMINATION-PROCTORING-SYSTEM&Date)
 
 
