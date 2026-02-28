@@ -1,0 +1,91 @@
+{% extends 'professor_dashboard.html' %}
+{% block body %}
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Generated Q&A</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="example" class="table align-items-center table-flush">
+                            <thead>
+                                {% if is_objective %}
+                                    <th>Question</th>
+                                    <th>Option A</th>
+                                    <th>Option B</th>
+                                    <th>Option C</th>
+                                    <th>Option D</th>
+                                    <th>Answer</th>
+                                {% else %}
+                                    <th>Question</th>
+                                    <th>Answer Type</th>
+                                    <th>Answer</th>
+                                {% endif %}
+                            </thead>
+                <tbody>
+              
+{% for qa in cresults %}
+    <tr>
+        {% if is_objective %}
+            <!-- objective tests pass dicts with question/answer keys -->
+            <td>{{ qa.question }}</td>
+            <td>{{ qa.opt_a }}</td>
+            <td>{{ qa.opt_b }}</td>
+            <td>{{ qa.opt_c }}</td>
+            <td>{{ qa.opt_d }}</td>
+            <td><strong>{{ qa.answer }}</strong></td>
+        {% else %}
+            <!-- subjective tests pass dicts with question/answer/answer_type keys -->
+            <td>{{ qa.question }}</td>
+            <td><span class="badge badge-info">{{ qa.answer_type }}</span></td>
+            <td>{{ qa.answer }}</td>
+        {% endif %}
+    </tr>
+{% endfor %}
+
+</tbody>
+            </table>
+        </div>
+    </div>
+            </div>
+        </div>
+            <script>
+                $(document).ready(function() {
+                $('#example').DataTable( {
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columnDefs: [
+                        {% if is_objective %}
+                            { width: "25%", targets: 0 },   // Question
+                            { width: "15%", targets: 1 },   // Option A
+                            { width: "15%", targets: 2 },   // Option B
+                            { width: "15%", targets: 3 },   // Option C
+                            { width: "15%", targets: 4 },   // Option D
+                            { width: "15%", targets: 5 }    // Answer
+                        {% else %}
+                            { width: "40%", targets: 0 },   // Question
+                            { width: "15%", targets: 1 },   // Answer Type
+                            { width: "45%", targets: 2 }    // Answer
+                        {% endif %}
+                    ]
+                } );
+            } );
+            </script>
+<style>
+    .badge {
+        padding: 0.35em 0.65em;
+        font-size: 0.85em;
+        font-weight: 600;
+    }
+    .badge-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+</style>
+{% endblock %}

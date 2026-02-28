@@ -1,0 +1,129 @@
+{% extends 'professor_dashboard.html' %}
+{% load static %}
+{% block body %}
+<div class="container-fluid w-100 px-4 pt-0">
+    <div class="d-flex justify-content-between align-items-center">
+        <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><span class="fas fa-home"></a></li>
+            <li class="breadcrumb-item"><a href="{% url 'professor_index' %}">Dashboard</a></li>
+        </ol>
+        
+        <div>
+            <span class="badge badge-primary bg-primary px-3 py-2 rounded-pill text-white"
+                style="font-size: 13px; font-weight: 600;"><i class="fas fa-user-shield mr-1"></i> PROFESSOR
+                PORTAL</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row d-flex align-items-center justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card border-light shadow-sm p-4 text-center anim-fade-in">
+                <div class="d-flex justify-content-center mb-4">
+                    <div class="position-relative">
+                        <img src="{% static 'a.jpeg' %}" class="rounded-circle shadow-lg border-white"
+                            style="width: 250px; height: 250px; object-fit: cover; border: 5px solid white;">
+                        <div class="position-absolute" style="bottom: 15px; right: 15px;">
+                            <span class="badge badge-success rounded-circle p-2"
+                                style="width: 20px; height: 20px; display: block; box-shadow: 0 0 0 4px white;">&nbsp;</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <h4 class="mb-1 text-secondary font-weight-normal">Welcome to NoCheatZone</h4>
+                    <h1 class="mb-0 h3 font-weight-bold">Hi, Professor: {{session.name}}</h1>
+                    <p class="text-muted mt-3 mb-4">Equip your students with a secure environment for their academic
+                        evaluations.</p>
+
+                    <a href="{% url 'create_test' %}"
+                        class="btn btn-primary btn-lg shadow px-5 py-2 transition-3d-hover"
+                        style="border-radius: 50px; font-weight: 700; background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); border: none;">
+                        <i class="fas fa-plus-circle mr-2"></i> CREATE NEW EXAM
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row mt-4">
+        <div class="col-12 text-center mb-4">
+            <h5 class="text-muted text-uppercase font-weight-bold" style="letter-spacing: 2px; font-size: 0.85rem;">
+                Start a New Assessment</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 mb-6">
+            <a href="{% url 'create_test' %}"
+                class="card border-0 shadow-sm transition-3d-hover h-100 text-decoration-none text-dark anim-fade-in"
+                style="animation-delay: 0.1s; border-radius: 15px;">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle mb-4 mx-auto bg-soft-primary text-primary d-flex align-items-center justify-content-center"
+                        style="width: 70px; height: 70px; background: rgba(78, 115, 223, 0.1); font-size: 1.8rem;">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <h5 class="font-weight-bold mb-2">Objective</h5>
+                    <p class="text-muted small mb-0">Multiple choice questions and objective evaluations.</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 mb-6">
+            <a href="{% url 'create_test_lqa' %}"
+                class="card border-0 shadow-sm transition-3d-hover h-100 text-decoration-none text-dark anim-fade-in"
+                style="animation-delay: 0.2s; border-radius: 15px;">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle mb-4 mx-auto bg-soft-info text-info d-flex align-items-center justify-content-center"
+                        style="width: 70px; height: 70px; background: rgba(54, 185, 204, 0.1); font-size: 1.8rem;">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h5 class="font-weight-bold mb-2">Subjective</h5>
+                    <p class="text-muted small mb-0">Descriptive questions for deep knowledge assessment.</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .bg-soft-primary {
+        background: rgba(78, 115, 223, 0.1);
+    }
+
+    .bg-soft-info {
+        background: rgba(54, 185, 204, 0.1);
+    }
+
+    .bg-soft-success {
+        background: rgba(28, 200, 138, 0.1);
+    }
+
+    .transition-3d-hover {
+        transition: all 0.3s ease;
+    }
+
+    .transition-3d-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+        border-bottom: 4px solid currentColor !important;
+    }
+
+    .anim-fade-in {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

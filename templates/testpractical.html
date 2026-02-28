@@ -1,0 +1,160 @@
+{% extends 'exam_layout.html' %}
+{% load static %}
+{% block body %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'sdk.js' %}"></script>
+<script>var tid = "{{test_id}}";</script>
+<main>
+  <section class="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
+    <div class="container">
+      <div class="col-12 d-flex align-items-center justify-content-center">
+        <div class="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-900">
+          <!-- Modern Header -->
+          <div
+            class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="mb-3 mb-md-0">
+              <h3 class="h5 mb-1 font-weight-bold text-primary"><i class="fas fa-user-graduate mr-2"></i> {{
+                session.name }}</h3>
+              <div class="text-muted small"><i class="fas fa-envelope mr-2"></i> {{ session.email }}</div>
+            </div>
+            <div class="text-center text-md-right">
+              <span class="badge badge-success bg-success px-3 py-2 rounded-pill text-white"
+                style="font-size: 12px; font-weight: 600;"><i class="fas fa-shield-alt mr-1"></i> SECURE PRACTICAL
+                EXAM</span>
+            </div>
+          </div>
+
+          <!-- Exam Info Badges -->
+          <div class="d-flex flex-wrap gap-3 mb-4 bg-light p-3 rounded align-items-center">
+            <span class="badge badge-primary mr-2 p-2"><i class="fas fa-book mr-1"></i> {{subject}}</span>
+            <span class="badge badge-info mr-2 p-2"><i class="fas fa-list-alt mr-1"></i> {{topic}}</span>
+            <span class="badge badge-secondary p-2"><i class="fas fa-id-card mr-1"></i> ID: {{tid}}</span>
+          </div>
+
+          <div class="card-body p-0">
+            <form action="" method="POST" id="prac" class="mt-4">
+              {% csrf_token %}
+              {% for test in callresults %}
+              <div class="form-group mb-5 p-4 border rounded shadow-sm">
+                <div class="mb-3 h5 font-weight-bold text-dark border-bottom pb-2">
+                  Q. {{test.qid}}: {{test.q}}
+                  <span class="badge badge-soft-primary float-right" style="font-size: 11px;">[{{test.marks}}
+                    MARKS]</span>
+                </div>
+
+                <div class="mb-4">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="h6 text-muted mb-0"><i class="fas fa-code mr-2"></i>Code Editor</span>
+                    <span class="badge badge-pill badge-info"
+                      style="font-size: 10px;">{{test.compiler|default:"Auto-Detect"}}</span>
+                  </div>
+                  <div data-id="example-widget" data-widget="4bada29b6d7c88d59406aa65c3d823ae"
+                    style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;"></div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="h6 text-muted" for="codeByStudent"><i class="fas fa-file-code mr-2"></i>Code
+                      Summary:</label>
+                    <textarea id="codeByStudent" name="codeByStudent" class="form-control" rows="4" readonly
+                      style="background-color: #f8fafc; font-family: monospace; font-size: 12px;"></textarea>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="h6 text-muted" for="inputByStudent"><i class="fas fa-terminal mr-2"></i>Output
+                      Log:</label>
+                    <textarea id="inputByStudent" name="inputByStudent" class="form-control" rows="4" readonly
+                      style="background-color: #f8fafc; font-family: monospace; font-size: 12px;"></textarea>
+                  </div>
+                </div>
+
+                <div class="form-group mb-0">
+                  <label class="small font-weight-bold text-uppercase text-muted" for="executedByStudent">Execution
+                    Status:</label>
+                  <input type="text" id="executedByStudent" name="executedByStudent"
+                    class="form-control form-control-sm" readonly
+                    style="background-color: #f1f5f9; border: none; font-weight: 600;">
+                </div>
+              </div>
+              {% endfor %}
+              <input type="hidden" name="test_id" value="{{ tid }}">
+              <div class="mt-4 border-top pt-4">
+                <button type="submit" class="btn btn-success btn-block btn-lg shadow-soft" id="finishBtn">
+                  <i class="fas fa-upload mr-2"></i> Finalize and Submit Practical Exam
+                </button>
+              </div>
+            </form>
+
+            <!-- Floating Monitoring Overlay -->
+            <div id="monitoring-overlay"
+              style="position: fixed; top: 15px; right: 15px; z-index: 9999; background: rgba(15, 23, 42, 0.95); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3); text-align: center; width: 240px; backdrop-filter: blur(8px);">
+              <!-- Timer Section -->
+              <div class="mb-3">
+                <div id="time" class="h3 mb-0 font-weight-bold text-white" style="letter-spacing: 1px;">{{duration}}
+                </div>
+                <div class="text-uppercase font-weight-bold text-info" style="font-size: 9px; letter-spacing: 1.5px;">
+                  Time Remaining</div>
+              </div>
+              <!-- Live Camera section -->
+              <div id="videocheck" style="display: none;">
+                <div class="d-flex justify-content-center align-items-center">
+                  <video id="stream" width="200" height="150" autoplay muted playsinline
+                    style="border: 2px solid #334155; border-radius: 10px; background: #000; overflow: hidden; transform: scaleX(-1); object-fit: cover;"></video>
+                  <canvas id="capture" width="200" height="150" style="display: none;"></canvas>
+                </div>
+              </div>
+              <!-- TokBox/External Stream section -->
+              <div id="livecheck"
+                style="display: none; width: 200px; height: 150px; margin: 0 auto; border-radius: 10px; overflow: hidden; border: 2px solid #334155;">
+                <div id="otEmbedContainer">
+                  <script
+                    src="https://tokbox.com/embed/embed/ot-embed.js?embedId=2020dbd9-0a89-472d-a60b-ca12ddfd48bc&room={{tid}}"></script>
+                </div>
+              </div>
+              <!-- Status Badge -->
+              <div class="mt-3">
+                <span class="badge badge-danger rounded-pill px-3 py-1 d-inline-flex align-items-center"
+                  style="font-size: 10px; background-color: #ef4444; color: white; border: none;">
+                  <span class="mr-2"
+                    style="width: 8px; height: 8px; background: white; border-radius: 50%; display: inline-block; animation: pulse-red 1.5s infinite;"></span>
+                  LIVE MONITORING
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+</main>
+<style>
+  @keyframes pulse-red {
+    0% {
+      transform: scale(0.9);
+      opacity: 0.7;
+    }
+
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(0.9);
+      opacity: 0.7;
+    }
+  }
+</style>
+<script type="text/javascript" src="{% static 'apppractical.js' %}"></script>
+<script>
+  var vid = "{{proctortype}}";
+  console.log(vid)
+  if (vid == "0") {
+    document.getElementById('videocheck').style.display = "block"
+    startStreaming();
+    captureSnapshot();
+  }
+  else {
+    document.getElementById('livecheck').style.display = "block"
+  }
+</script>
+
+{% endblock %}
