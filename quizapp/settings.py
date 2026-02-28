@@ -5,19 +5,23 @@ Converted from Flask application.
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'sem6project-django-conversion'
+SECRET_KEY = os.getenv('SECRET_KEY', 'sem6project-django-conversion')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# Stripe settings
-STRIPE_SECRET_KEY = 'sk_test_your_secret_key_here'  # Replace with your actual Stripe secret key
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51ISHOsAGsy3DJu1jc1IfuLYDkED8d1QPRl5e8RTU7mdcZpELeGEysYFH4NfjLoPiIkRpghWUHmUH7QpOk1sgzM8X00prZwtaX9'
+# Stripe settings (use environment variables)
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_your_secret_key_here')
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY', 'pk_test_your_publishable_key_here')
 
 ALLOWED_HOSTS = ['*']
 
