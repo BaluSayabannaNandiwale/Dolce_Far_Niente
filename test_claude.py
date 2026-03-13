@@ -2,7 +2,7 @@
 """Quick test of Claude/Anthropic question generation."""
 import os
 import sys
-
+  
 sys.path.insert(0, '.')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'quizapp.settings')
 
