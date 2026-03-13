@@ -17,7 +17,7 @@
   - Violation counter updates
   - Automatic exam termination
   - Complete resource cleanup
-
+  - 
 #### 2. **static/camera-monitoring-tests.js** (NEW)
 - **Size**: 200+ lines
 - **Purpose**: Comprehensive automated test suite
