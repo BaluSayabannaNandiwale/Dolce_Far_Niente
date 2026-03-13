@@ -52,7 +52,7 @@ def download_yolo_weights():
 def main():
     print("Starting model downloads...")
     
-    # Create models directory if it doesn't exist
+    
     os.makedirs("models", exist_ok=True)
     
     # Download YOLOv3 weights
