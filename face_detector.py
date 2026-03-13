@@ -33,7 +33,7 @@ def find_faces(img, model):
 	(300, 300), (104.0, 177.0, 123.0))
     model.setInput(blob)
     res = model.forward()
-    faces = []
+    faces = [] 
     for i in range(res.shape[2]):
         confidence = res[0, 0, i, 2]
         if confidence > 0.5:
