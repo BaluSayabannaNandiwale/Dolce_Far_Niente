@@ -12,3 +12,4 @@ admin.site.register(LongQA)
 admin.site.register(LongTest)
 admin.site.register(PracticalQA)
 admin.site.register(PracticalTest)
+
