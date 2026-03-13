@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import sys
 
-# Force flush
+
 sys.stdout.reconfigure(line_buffering=True)
 
 print("START verify_yolo.py")
