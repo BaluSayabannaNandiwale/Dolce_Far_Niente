@@ -92,3 +92,5 @@ if __name__ == '__main__':
     print("   1. If quota exceeded: Wait ~1 hour and try again")
     print("   2. Or upgrade to paid plan: https://ai.google.dev/pricing")
     print("="*60 + "\n")
+
+
