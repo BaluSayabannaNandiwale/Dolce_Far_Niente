@@ -1,7 +1,7 @@
 """
 Subjective Question Generator using GROQ AI
 Generates open-ended, essay-type questions from input text.
-"""
+""" 
 
 import json
 import os
