@@ -6,7 +6,7 @@
 - The main Flask application (`app.py`) is successfully running
 - Server is accessible at: `http://127.0.0.1:5000`
 - Server is also accessible at: `http://10.102.58.67:5000` (local network IP)
-
+  
 ### ✅ Dependencies Installed
 - Flask and related packages (Flask-WTF, Flask-MySQLdb, Flask-Mail, Flask-Cors)
 - TensorFlow (latest version)
