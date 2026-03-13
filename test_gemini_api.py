@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python  
 """
 Test script for Google Generative AI (Gemini) integration
 Verifies API key configuration and tests question generation
