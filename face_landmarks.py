@@ -109,4 +109,4 @@ def detect_marks(img, model, face):
     marks[:, 1] += facebox[1]
     marks = marks.astype(np.uint)
 
-    return marks
+    return marks 
