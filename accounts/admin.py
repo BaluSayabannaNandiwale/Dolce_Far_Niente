@@ -22,7 +22,7 @@ class UserAdmin(BaseUserAdmin):
         ('Login Status', {'fields': ('user_login',)}),
         ('Important dates', {'fields': ('register_time',)}),
     )
-    
+
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
