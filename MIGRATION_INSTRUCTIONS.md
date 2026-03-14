@@ -16,7 +16,7 @@ This tells Django that the tables already exist and skips creating them.
 
 ### Option 2: Backup and Start Fresh
 If you want a clean Django database:
-
+ 
 1. Backup existing database:
 ```bash
 cp quizapp.db quizapp.db.backup
