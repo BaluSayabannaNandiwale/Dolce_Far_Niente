@@ -34,6 +34,10 @@
 
   <!--Lottie Js-->
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  
+  <!-- SweetAlert2 CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     @media (min-width: 768px) {
@@ -58,6 +62,31 @@
         margin-left: 0;
         width: 100%;
       }
+    }
+
+    /* Active State for Sidebar links */
+    .sidebar .nav-link.active {
+      background: rgba(101, 163, 13, 0.2) !important;
+      color: #A3E635 !important;
+      border-left: 4px solid #65A30D;
+      transform: translateX(8px);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar .nav-link.active .sidebar-icon {
+      color: #A3E635 !important;
+    }
+
+    .sidebar .nav-link {
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 4px 12px;
+    }
+
+    .sidebar .nav-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #A3E635 !important;
+      transform: translateX(8px);
     }
   </style>
 
@@ -87,7 +116,7 @@
               alt="Bonnie Green">
           </div>
           <div class="d-block">
-            <h2 class="h6">{{session.name}}</h2>
+            <h2 class="h6">{{request.user.name}}</h2>
             <a href="#" onclick="return funLogout()" class="btn btn-secondary text-dark btn-xs"><span class="me-2"><span
                   class="fas fa-sign-out-alt"></span></span>Logout</a>
           </div>
@@ -100,19 +129,25 @@
 
       <ul class="nav flex-column pt-3 pt-md-0">
         <li class="nav-item">
-          <a href="{% url 'create_test' %}" class="nav-link">
+
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'create_test' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'create_test' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-plus-circle"></span></span>
             <span class="sidebar-text">Create Exam</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="{% url 'generate_test' %}" class="nav-link">
+          <a href="{% url 'generate_test' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'generate_test' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-magic"></span></span>
             <span class="sidebar-text">Generate Questions</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="{% url 'viewquestions' %}" class="nav-link d-flex justify-content-between">
+          <a href="{% url 'viewquestions' %}"
+            class="nav-link d-flex justify-content-between {% if request.resolver_match.url_name == 'viewquestions' %}active{% endif %}">
             <span>
               <span class="sidebar-icon"><span class="fas fa-eye"></span></span>
               <span class="sidebar-text">View Questions </span>
@@ -120,68 +155,78 @@
           </a>
         </li>
         <li class="nav-item ">
-          <a href="{% url 'updatetidlist' %}" class="nav-link">
+          <a href="{% url 'updatetidlist' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'updatetidlist' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-edit"></span></span>
             <span class="sidebar-text">Update Questions</span>
           </a>
         </li>
         <li class="nav-item ">
-          <a href="{% url 'deltidlist' %}" class="nav-link">
+          <a href="{% url 'deltidlist' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'deltidlist' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-trash-alt"></span></span>
             <span class="sidebar-text">Delete Questions</span>
           </a>
         </li>
         <li class="nav-item ">
-          <a href="{% url 'disptests' %}" class="nav-link">
+          <a href="{% url 'disptests' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'disptests' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-history"></span></span>
             <span class="sidebar-text">Exam History</span>
           </a>
         </li>
         <li class="nav-item ">
-          <a href="{% url 'livemonitoringtid' %}" class="nav-link">
+          <a href="{% url 'livemonitoringtid' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'livemonitoringtid' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-video"></span></span>
             <span class="sidebar-text">Live Monitoring</span>
           </a>
         </li>
         <li class="nav-item ">
-          <a href="{% url 'viewstudentslogs' %}" class="nav-link">
+          <a href="{% url 'viewstudentslogs' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'viewstudentslogs' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-binoculars"></span></span>
             <span class="sidebar-text">Student Monitoring</span>
           </a>
         </li>
         <li class="nav-item ">
-          <a href="{% url 'insertmarkstid' %}" class="nav-link">
+          <a href="{% url 'insertmarkstid' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'insertmarkstid' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-spell-check"></span></span>
             <span class="sidebar-text">Insert Marks</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="{% url 'publish_results_testid' %}" class="nav-link">
+          <a href="{% url 'publish_results_testid' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'publish_results_testid' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-clipboard-check"></span></span>
             <span class="sidebar-text">Publish Results</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="{% url 'tests_created' %}" class="nav-link">
+          <a href="{% url 'tests_created' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'tests_created' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-poll"></span></span>
             <span class="sidebar-text">Results</span>
           </a>
         </li>
         <li role="separator" class="dropdown-divider mt-4 mb-3 border-black"></li>
         <li class="nav-item ">
-          <a href="/report_professor" class="nav-link">
+          <a href="/report_professor" class="nav-link {% if request.path == '/report_professor' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-bug"></span></span>
             <span class="sidebar-text">Report Problems</span>
           </a>
         </li>
+     
         <li class="nav-item ">
-          <a href="/payment" class="nav-link">
+          <a href="/payment" class="nav-link {% if request.path == '/payment' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-money-bill-alt"></span></span>
             <span class="sidebar-text">Payment</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="/changepassword_professor" class="nav-link d-flex align-items-center">
+          <a href="/changepassword_professor"
+            class="nav-link d-flex align-items-center {% if request.path == '/changepassword_professor' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-key"></span></span>
             <span class="sidebar-text">Change Password</span>
           </a>
@@ -201,26 +246,15 @@
   </nav>
 
   <main class="content">
-    <div class="py-5"></div>
-    <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
-      <div class="container-fluid px-0">
-        <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
-          <div class="h-100 row align-items-center">
-            <!-- Top navbar content could go here if needed -->
-          </div>
-        </div>
-      </div>
-    </nav>
 
-    <div class="container-fluid px-4">
+    <div class="container-fluid px-4 pt-2">
       {% include 'includes/_messages.html' %}
       {% block body %}{% endblock %}
     </div>
   </main>
   <script>
     function funLogout() {
-
-      swal.fire({
+      Swal.fire({
         title: 'Are you sure?',
         text: "Do you really want to logout?",
         icon: 'warning',
@@ -236,16 +270,19 @@
         } else if (
           result.dismiss === Swal.DismissReason.cancel
         ) {
-          swal.fire(
+          Swal.fire(
             'Cancelled',
             'Logout cancelled.',
             'error'
           )
         }
       })
+      return false;
     }
 
   </script>
+
+
 
   <!-- Core -->
   <script src="{% static 'volt/vendor/@popperjs/core/dist/umd/popper.min.js' %}"></script>
@@ -267,8 +304,7 @@
   <!-- Datepicker -->
   <script src="{% static 'volt/vendor/vanillajs-datepicker/dist/js/datepicker.min.js' %}"></script>
 
-  <!-- Sweet Alerts 2 -->
-  <script src="{% static 'volt/vendor/sweetalert2/dist/sweetalert2.all.min.js' %}"></script>
+  <!-- Sweet Alerts 2 (Local call removed as CDN added in head) -->
 
   <!-- Moment JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>

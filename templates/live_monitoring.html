@@ -1,39 +1,144 @@
 {% extends 'professor_dashboard.html' %}
 {% block body %}
-<div class="row align-items-center d-flex  justify-content-center">
-    <div class="col-12 mb-4">
-        <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
-            <div class="card-body align-items-center d-flex justify-content-center">     
-                <div class="row mb-4">
-                    {% if testid %}
-                    <div class="col-lg-12 col-sm-16">
-                      <h3 class="h3 text-center">LIVE MONITORING of EXAM-ID: {{testid}}</h3>  
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <div class="container">
-                              <div class="justify-content-center align-items-center">
-                                <div id="otEmbedContainer"  id ="livecheck" style="width:650px; height:1000px;">
-                                <script src="https://tokbox.com/embed/embed/ot-embed.js?embedId=2020dbd9-0a89-472d-a60b-ca12ddfd48bc&room={{testid}}"></script>
-                              </div>
-                              </div>
-                            </div>
-                    </div>
-                    </div>
-                    {% else %}
-                    <div class="col-lg-12 col-sm-16">
-                        <h3 class="h3 text-center">
-                            No Records Found!
-                            <br>
-                            Or
-                            <br>
-                            Note: Only Live Exam ID's are shown between duration of the Exam.
-                        </h3>  
-                      </div>
-                    {% endif %}
-                            </div>
-                        </div>
-                    </div>
+
+<style>
+  /* Card Styling */
+  .card {
+    border-radius: 14px;
+    background: linear-gradient(145deg, #ffffff, #eef7ff);
+    transition: all 0.4s ease;
+  }
+
+  /* Card Hover Animation */
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0, 123, 255, 0.18);
+  }
+
+  /* Heading Style */
+  h3 {
+    color: #2c7be5;
+    font-weight: 700;
+    letter-spacing: 1px;
+    animation: fadeSlide 1s ease;
+  }
+
+  /* Container Animation */
+  .container {
+    animation: fadeInPage 0.8s ease;
+  }
+
+  /* Video Container Styling */
+  #otEmbedContainer {
+    border-radius: 12px;
+    border: 2px solid #d6e8ff;
+    box-shadow: 0 10px 25px rgba(0, 123, 255, 0.15);
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+
+  /* Hover Effect on Live Container */
+  #otEmbedContainer:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 123, 255, 0.25);
+  }
+
+  /* Page Load Animation */
+  @keyframes fadeInPage {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Heading Animation */
+  @keyframes fadeSlide {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+
+<div class="row align-items-center d-flex justify-content-center">
+
+  <div class="col-12 mb-4">
+
+    <div class="card border-light shadow-sm components-section align-items-center d-flex justify-content-center">
+
+      <div class="card-body align-items-center d-flex justify-content-center">
+
+        <div class="row mb-4">
+
+          {% if testid %}
+
+          <div class="col-lg-12 col-sm-16">
+            <h3 class="h3 text-center">
+              LIVE MONITORING of EXAM-ID: {{testid}}
+            </h3>
+          </div>
+
+          <div class="card-body">
+
+            <div class="form-group">
+
+              <div class="container">
+
+                <div class="justify-content-center align-items-center">
+
+                  <div id="otEmbedContainer" id="livecheck" style="width:650px;height:1000px;">
+
+                    <script
+                      src="https://tokbox.com/embed/embed/ot-embed.js?embedId=2020dbd9-0a89-472d-a60b-ca12ddfd48bc&room={{testid}}">
+                      </script>
+
+                  </div>
+
                 </div>
+
+              </div>
+
             </div>
+
+          </div>
+
+          {% else %}
+
+          <div class="col-lg-12 col-sm-16">
+
+            <h3 class="h3 text-center">
+
+              No Records Found!
+              <br>
+              Or
+              <br>
+              Note: Only Live Exam ID's are shown between duration of the Exam.
+
+            </h3>
+
+          </div>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
 {% endblock %}

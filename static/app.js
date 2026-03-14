@@ -276,10 +276,13 @@ $(document).ready(function () {
     if (url.includes('/give-test/') && !url.endsWith('/give-test/')) {
         console.log("Exam page detected");
 
-        var list = url.split('/');
+        var list = window.location.pathname.split('/');
         // Handle trailing slash
         var testId = list[list.length - 1];
         if (!testId) testId = list[list.length - 2];
+        if (typeof tid !== 'undefined' && tid) {
+            testId = tid;
+        }
 
         $('.question').remove();
 
@@ -292,7 +295,10 @@ $(document).ready(function () {
             data: { id: testId },
             success: function (temp) {
                 console.log("Questions loaded:", temp);
-                nos = temp;
+                // Sort to reverse the randomization and keep order consistent with the backend
+                nos = temp.sort(function (a, b) {
+                    return String(a).localeCompare(String(b));
+                });
                 make_array();
                 // If URL contains ?q= use that index (1-based). Otherwise start at 1.
                 try {
@@ -320,33 +326,33 @@ $(document).ready(function () {
         // Timer setup
         var timeElem = $('#time');
         console.log('⏱️ Timer initialization - looking for #time element');
-        
+
         if (timeElem.length > 0) {
-                    var timeText = timeElem.text().trim();
-                    console.log('Raw time element text:', timeText);
+            var timeText = timeElem.text().trim();
+            console.log('Raw time element text:', timeText);
 
-                    // Accept either plain seconds or formatted HH:MM:SS / MM:SS
-                    var time = NaN;
-                    if (timeText.indexOf(':') !== -1) {
-                        var parts0 = timeText.split(':').map(p => parseInt(p, 10) || 0);
-                        if (parts0.length === 3) {
-                            time = parts0[0]*3600 + parts0[1]*60 + parts0[2];
-                        } else if (parts0.length === 2) {
-                            time = parts0[0]*60 + parts0[1];
-                        } else {
-                            time = parseInt(timeText, 10);
-                        }
-                    } else {
-                        // remove any non-digit characters then parse
-                        var digits = timeText.replace(/[^0-9]/g, '');
-                        time = digits ? parseInt(digits, 10) : NaN;
-                    }
-                    console.log('Parsed time (seconds):', time, '| isNaN:', isNaN(time));
+            // Accept either plain seconds or formatted HH:MM:SS / MM:SS
+            var time = NaN;
+            if (timeText.indexOf(':') !== -1) {
+                var parts0 = timeText.split(':').map(p => parseInt(p, 10) || 0);
+                if (parts0.length === 3) {
+                    time = parts0[0] * 3600 + parts0[1] * 60 + parts0[2];
+                } else if (parts0.length === 2) {
+                    time = parts0[0] * 60 + parts0[1];
+                } else {
+                    time = parseInt(timeText, 10);
+                }
+            } else {
+                // remove any non-digit characters then parse
+                var digits = timeText.replace(/[^0-9]/g, '');
+                time = digits ? parseInt(digits, 10) : NaN;
+            }
+            console.log('Parsed time (seconds):', time, '| isNaN:', isNaN(time));
 
-                    if (!isNaN(time) && time > 0) {
+            if (!isNaN(time) && time > 0) {
                 console.log('✓ Valid timer duration detected:', time, 'seconds');
                 console.log('  Converting to HH:MM:SS format...');
-                
+
                 // Convert seconds to HH:MM:SS or MM:SS for initial display
                 var hours = Math.floor(time / 3600);
                 var minutes = Math.floor((time % 3600) / 60);
@@ -354,19 +360,19 @@ $(document).ready(function () {
                 hours = hours < 10 ? "0" + hours : ('' + hours);
                 minutes = minutes < 10 ? "0" + minutes : ('' + minutes);
                 seconds = seconds < 10 ? "0" + seconds : ('' + seconds);
-                
+
                 var initialDisplay = (hours === "00") ? (minutes + ":" + seconds) : (hours + ":" + minutes + ":" + seconds);
                 console.log('  Initial display format:', initialDisplay);
-                
+
                 timeElem.text(initialDisplay);
                 timeElem.html(initialDisplay);
-                
+
                 console.log('✓ Starting timer...');
                 startTimer(time, timeElem);
-                
+
                 console.log('✓ Starting time update sender...');
                 sendTime();
-                
+
                 flag_time = true;
                 console.log('✓ Timer setup complete - flag_time = true');
             } else {
@@ -472,23 +478,23 @@ $(document).ready(function () {
             if (qidInput && (!qidInput.value || qidInput.value === '')) {
                 if (typeof nos !== 'undefined' && nos[curr]) qidInput.value = nos[curr];
             }
-                // Update time hidden field with current remaining seconds so server can persist it
-                var timeInput = document.getElementById('time_input');
-                if (timeInput) {
-                    var timeText = $('#time').text().trim();
-                    if (timeText) {
-                        var parts = timeText.split(':');
-                        var sec = 0;
-                        if (parts.length === 3) {
-                            sec = (parseInt(parts[0], 10) || 0) * 3600 + (parseInt(parts[1], 10) || 0) * 60 + (parseInt(parts[2], 10) || 0);
-                        } else if (parts.length === 2) {
-                            sec = (parseInt(parts[0], 10) || 0) * 60 + (parseInt(parts[1], 10) || 0);
-                        } else {
-                            sec = parseInt(parts[0], 10) || 0;
-                        }
-                        timeInput.value = sec;
+            // Update time hidden field with current remaining seconds so server can persist it
+            var timeInput = document.getElementById('time_input');
+            if (timeInput) {
+                var timeText = $('#time').text().trim();
+                if (timeText) {
+                    var parts = timeText.split(':');
+                    var sec = 0;
+                    if (parts.length === 3) {
+                        sec = (parseInt(parts[0], 10) || 0) * 3600 + (parseInt(parts[1], 10) || 0) * 60 + (parseInt(parts[2], 10) || 0);
+                    } else if (parts.length === 2) {
+                        sec = (parseInt(parts[0], 10) || 0) * 60 + (parseInt(parts[1], 10) || 0);
+                    } else {
+                        sec = parseInt(parts[0], 10) || 0;
                     }
+                    timeInput.value = sec;
                 }
+            }
         } catch (err) {
             console.warn('Error preparing form submit:', err);
         }
@@ -597,6 +603,23 @@ function bookmarkQuestion() {
     document.getElementById('question-list').innerHTML = '';
     ques_grid();
     updateQuestionCounter();
+
+    // After bookmarking, automatically move to the next question if available
+    if (nos && curr < nos.length - 1) {
+        curr += 1;
+        display_ques(curr + 1);
+        updateQueryParamForQuestion(curr + 1);
+    } else {
+        // On last question, stay and optionally inform user
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'info',
+                title: 'Bookmarked Last Question',
+                text: 'You have bookmarked the last question. Click "Finish Exam" when you are ready to submit.',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
 }
 
 async function submitAnswer() {
@@ -625,11 +648,23 @@ async function submitAnswer() {
         ques_grid();
         updateQuestionCounter();
 
-        // Auto-move to next question
+        // Auto-move to next question, or prompt to finish on last question
         if (curr < nos.length - 1) {
             curr += 1;
             display_ques(curr + 1);
             updateQueryParamForQuestion(curr + 1);
+        } else {
+            // Last question: do not loop, instruct user to finish exam
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Last Question Submitted',
+                    text: 'You have reached the last question. Please review if needed and click "Finish Exam" to submit.',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                alert('You have reached the last question. Click "Finish Exam" to submit your exam.');
+            }
         }
     } catch (error) {
         console.error('Error submitting answer:', error);
@@ -665,10 +700,10 @@ var timerInterval = null;  // Store timer interval globally for cleanup
 
 function startTimer(duration, display) {
     var timer = duration, hours, minutes, seconds;
-    
+
     // Log timer start for debugging
     console.log('startTimer() called with duration:', duration, 'seconds, display element:', display);
-    
+
     // Clear any existing timer
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -693,11 +728,11 @@ function startTimer(duration, display) {
 
         // Prefer MM:SS display unless hours > 0
         var timeString = (hours === "00") ? (minutes + ":" + seconds) : (hours + ":" + minutes + ":" + seconds);
-        
+
         // Update display element (using both text and html to be safe)
         display.text(timeString);
         display.html(timeString);
-        
+
         // Log every 30 seconds to avoid console spam
         if (timer % 30 === 0 || timer < 10) {
             console.log('⏱️ Timer:', timeString, '(remaining:', timer, 's)');
@@ -709,21 +744,15 @@ function startTimer(duration, display) {
             clearInterval(timerInterval);
             timerInterval = null;
             flag_time = false;
-            // Auto submit via form if present
+            // Auto-finish exam via AJAX without additional confirmation
             try {
-                if (document.getElementById('examForm')) {
-                    var f = document.getElementById('examForm');
-                    var act = document.createElement('input');
-                    act.type = 'hidden'; act.name = 'action'; act.value = 'finish';
-                    f.appendChild(act);
-                    f.submit();
-                } else {
-                    finish_test();
-                }
-            } catch (e) { finish_test(); }
+                finish_test();
+            } catch (e) {
+                console.error('Error auto-finishing exam on timer expiry:', e);
+            }
         }
     }, 1000);
-    
+
     console.log('✓ Timer interval started successfully');
 }
 
@@ -748,16 +777,16 @@ async function finish_test() {
         }
     }
 
-        try {
-            const response = await apiRequest(window.location.href, { flag: 'completed' }, 'POST');
-            console.log("Test completed successfully", response);
-            // Redirect student to tests-given listing after finishing exam
-            window.location.replace('/tests-given/');
-        } catch (error) {
-            console.error("Error completing test:", error);
-            // Still redirect to tests-given even if there's an error
-            window.location.replace('/tests-given/');
-        }
+    try {
+        const response = await apiRequest(window.location.href, { flag: 'completed' }, 'POST');
+        console.log("Test completed successfully", response);
+        // Redirect student to tests-given listing after finishing exam
+        window.location.replace('/tests-given/');
+    } catch (error) {
+        console.error("Error completing test:", error);
+        // Still redirect to tests-given even if there's an error
+        window.location.replace('/tests-given/');
+    }
 }
 
 function sendTime() {
@@ -767,14 +796,14 @@ function sendTime() {
             clearInterval(sendTimeInterval);
             return;
         }
-        
+
         var timeElem = $('#time');
         if (!timeElem || timeElem.length === 0) {
             console.warn('Time element not found, stopping sendTime');
             clearInterval(sendTimeInterval);
             return;
         }
-        
+
         var time = timeElem.text().trim();
         if (!time) {
             console.warn('Time text is empty');
@@ -784,7 +813,7 @@ function sendTime() {
         try {
             var parts = time.split(':');
             var seconds = 0;
-            
+
             if (parts.length === 3) {
                 // Format is HH:MM:SS
                 var h = parseInt(parts[0]) || 0;
@@ -799,7 +828,7 @@ function sendTime() {
             } else {
                 seconds = parseInt(parts[0]) || 0;
             }
-            
+
             // Send time update to server every 10 seconds instead of 5
             $.ajax({
                 type: 'POST',
@@ -807,11 +836,11 @@ function sendTime() {
                 dataType: "json",
                 data: { flag: 'time', time: seconds },
                 timeout: 5000,
-                error: function(error) {
+                error: function (error) {
                     console.warn('Failed to send time update:', error.status);
                 }
             });
-            
+
         } catch (error) {
             console.error('Error in sendTime:', error);
         }
@@ -822,7 +851,7 @@ var marked = function () {
     var count = 0;
     if (!nos) return 0;
     for (var i = 1; i <= nos.length; i++) {
-        if (data[i] && (data[i].status == SUBMITTED || data[i].status == SUBMITTED_BOOKMARKED)) {
+        if (data[i] && (data[i].status == SUBMITTED || data[i].status == SUBMITTED_BOOKMARKED || data[i].status == MARKED || data[i].status == MARKED_BOOKMARKED)) {
             count++;
         }
     }
@@ -853,23 +882,20 @@ var ques_grid = function () {
     for (var i = 1; i <= nos.length; i++) {
         if (!data[i]) data[i] = { marked: null, status: NOT_MARKED };
 
-        var color = '';
+        var btnClass = '';
         var status = data[i].status;
-        if (status == NOT_MARKED) {
-            color = '#1976D2'; // Blue
+
+        if (status == BOOKMARKED || status == SUBMITTED_BOOKMARKED || status == MARKED_BOOKMARKED) {
+            btnClass = 'btn-warning text-dark'; // Yellow
         }
-        else if (status == SUBMITTED) {
-            color = '#42ed62'; // Green
-        }
-        else if (status == BOOKMARKED || status == SUBMITTED_BOOKMARKED) {
-            color = '#e6ed7b'; // Yellow
+        else if (status == SUBMITTED || status == MARKED) {
+            btnClass = 'btn-success text-white'; // Green
         }
         else {
-            color = '#f44336'; // Red
+            btnClass = 'btn-primary text-white'; // Blue
         }
 
-        var j = i < 10 ? "0" + i : i;
-        var buttonHtml = '<div class="col-sm-2 mb-2"><button class="btn btn-primary question-btn" style="background-color:' + color + '; color:white; width:100%; height:40px; border:none;">' + j + '</button></div>';
+        var buttonHtml = '<div class="col-sm-2 mb-2"><button class="btn ' + btnClass + ' question-btn" style="width:100%; height:40px;">' + i + '</button></div>';
         $('#question-list').append(buttonHtml);
     }
 }

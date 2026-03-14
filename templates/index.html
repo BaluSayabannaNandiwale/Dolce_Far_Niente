@@ -1,603 +1,1057 @@
 {% extends 'layout.html' %}
 {% load static %}
-{% block body %}
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<html>
+{% block head %}
+<style>
+  /* ====== INDEX PAGE CUSTOM STYLES ====== */
+  :root {
+    --light-blue-bg: #F0F9FF;
+    /* Sky Light */
+    --soft-blue: #E0F2FE;
+    --primary-blue: #0284C7;
+    /* Sky 600 */
+    --deep-blue: #0C4A6E;
+    /* Sky 900 */
+    --accent-teal: #0D9488;
+    --white: #FFFFFF;
+    --text-muted: #64748B;
+    --hero-gradient: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+  }
 
-<head>
-  <div class="container pt-5">
-    <div class="row justify-content-between align-items-center">
-      <div class="col">
-        <div class="card shadow-sm border-0">
-          <div class="row card-body p-4 p-lg-5">
-            <div class="col">
-              <h3 class="display-4 mb-4">Exam Security. <br> Deter. Detect. Prevent.</h3>
-              <p class="lead mb-4 text-muted">Online monitoring to advance your learning and testing program. Validate
-                knowledge. Reduce costs. Expand access.</p>
-            </div>
-            <div class="col text-right">
-              <img src="{% static 'myproctoraiindex.gif' %}" />
-            </div>
+  /* Hero Section */
+  .hero-section {
+    background: var(--hero-gradient);
+    padding: 120px 0 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -20%;
+    width: 70%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(2, 132, 199, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    right: -10%;
+    width: 50%;
+    height: 150%;
+    background: radial-gradient(ellipse, rgba(13, 148, 136, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(2, 132, 199, 0.1);
+    border: 1px solid rgba(2, 132, 199, 0.2);
+    color: var(--primary-blue);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(4px);
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--deep-blue);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title span {
+    color: var(--primary-blue);
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero-title span::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: rgba(2, 132, 199, 0.1);
+    z-index: -1;
+  }
+
+  .hero-desc {
+    font-size: 1.2rem;
+    color: #475569;
+    line-height: 1.8;
+    max-width: 550px;
+    margin-bottom: 40px;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--primary-blue);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 16px 36px;
+    border-radius: 12px;
+    border: none;
+    text-decoration: none;
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .hero-cta:hover {
+    background: #0369a1;
+    box-shadow: 0 15px 35px rgba(2, 132, 199, 0.4);
+    color: #fff;
+    transform: translateY(-4px);
+  }
+
+  .hero-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid rgba(2, 132, 199, 0.3);
+    color: var(--primary-blue);
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 16px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s;
+    margin-left: 15px;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .hero-cta-secondary:hover {
+    border-color: var(--primary-blue);
+    background: #fff;
+    color: var(--primary-blue);
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 36px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat-item {
+    text-align: left;
+  }
+
+  .hero-stat-number {
+    font-size: 2.22rem;
+    font-weight: 800;
+    color: var(--deep-blue);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .hero-img-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-img-wrap img {
+    border-radius: 20px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+    max-width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-img-glow {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    background: radial-gradient(ellipse, rgba(2, 132, 199, 0.2) 0%, transparent 70%);
+    filter: blur(40px);
+    z-index: 0;
+  }
+
+  /* Section heading */
+  .section-label {
+    display: inline-block;
+    color: var(--primary-blue);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4.5vw, 2.8rem);
+    font-weight: 800;
+    color: var(--deep-blue);
+    line-height: 1.2;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+    color: #64748b;
+    max-width: 580px;
+  }
+
+  /* Mission / Vision section */
+  .mission-section {
+    padding: 100px 0;
+    background: var(--light-blue-bg);
+  }
+
+  .feature-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(2, 132, 199, 0.12);
+    border-color: var(--primary-blue);
+  }
+
+  .feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+    background: #F0F9FF;
+    color: var(--primary-blue);
+    box-shadow: inset 0 0 0 1px rgba(2, 132, 199, 0.1);
+  }
+
+  .feature-icon.teal {
+    background: #F0FDFA;
+    border: 1px solid rgba(13, 148, 136, 0.1);
+    color: #0D9488;
+  }
+
+  .feature-icon.blue {
+    background: #EFF6FF;
+    border: 1px solid rgba(37, 99, 235, 0.1);
+    color: #2563EB;
+  }
+
+  .feature-icon.amber {
+    background: #FFFBEB;
+    border: 1px solid rgba(217, 119, 6, 0.1);
+    color: #D97706;
+  }
+
+  .feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+  }
+
+  .feature-card p {
+    color: #64748b;
+    font-size: 0.97rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* Feature list in content */
+  .feature-list-styled {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .feature-list-styled li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 0.97rem;
+    color: #475569;
+    font-weight: 500;
+  }
+
+  .feature-list-styled li::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--primary-blue);
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  /* Content section alternating rows */
+  .content-section {
+    padding: 90px 0;
+    background: #fff;
+  }
+
+  .content-section.alt-bg {
+    background: var(--soft-blue);
+  }
+
+  .content-visual {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
+  }
+
+  .content-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .content-visual-lottie {
+    border-radius: 20px;
+    background: var(--soft-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 400px;
+  }
+
+  /* Authentication section */
+  .auth-section {
+    background: linear-gradient(135deg, #0C4A6E 0%, #075985 100%);
+    padding: 100px 0;
+    color: #fff;
+  }
+
+  .auth-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .auth-step:last-child {
+    border-bottom: none;
+  }
+
+  .auth-step-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #BAE6FD;
+  }
+
+  .auth-step-icon img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+  }
+
+  .auth-step-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+  }
+
+  .auth-step-desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* "Best Suited For" section */
+  .suited-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 28px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    transition: all 0.3s;
+    height: 100%;
+  }
+
+  .suited-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 60px rgba(2, 132, 199, 0.15);
+    border-color: var(--primary-blue);
+  }
+
+  .suited-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0 auto 18px;
+    display: block;
+  }
+
+  .suited-card h5 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+  }
+
+  .suited-card p {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* KPI / Trusted section */
+  .kpi-section {
+    padding: 100px 0;
+    background: var(--light-blue-bg);
+  }
+
+  .kpi-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s;
+    height: 100%;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(2, 132, 199, 0.1);
+    border-color: var(--primary-blue);
+  }
+
+  .kpi-card img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    margin: 0 auto 14px;
+    display: block;
+  }
+
+  .kpi-card h6 {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 6px;
+  }
+
+  .kpi-card p {
+    font-size: 0.84rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* Contact section */
+  .contact-section {
+    padding: 90px 0;
+    background: #fff;
+  }
+
+  .map-wrapper {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+    margin-bottom: 60px;
+  }
+
+  .map-wrapper iframe {
+    display: block;
+    width: 100%;
+    border: none;
+  }
+
+  .contact-info-card {
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 32px;
+    border: 1px solid #e2e8f0;
+    height: 100%;
+    transition: all 0.3s;
+  }
+
+  .contact-info-card:hover {
+    box-shadow: 0 15px 35px rgba(2, 132, 199, 0.1);
+    border-color: var(--primary-blue);
+    transform: translateY(-4px);
+  }
+
+  .contact-info-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: #F0F9FF;
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  .contact-info-card h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+  }
+
+  .contact-info-card a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    transition: color 0.2s;
+    font-weight: 600;
+  }
+
+  .contact-info-card a:hover {
+    color: #0369a1;
+    text-decoration: underline;
+  }
+
+  .contact-info-card address {
+    font-style: normal;
+    color: #475569;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .available-badge {
+    display: inline-block;
+    background: #dcfce7;
+    color: #16a34a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 70px 0 60px;
+    }
+
+    .hero-cta-secondary {
+      margin-left: 0;
+      margin-top: 12px;
+    }
+
+    .hero-stats {
+      gap: 20px;
+    }
+
+    .content-section,
+    .mission-section,
+    .kpi-section,
+    .contact-section,
+    .auth-section {
+      padding: 60px 0;
+    }
+  }
+</style>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+{% endblock %}
+
+{% block body %}
+
+<!-- ==================== HERO SECTION ==================== -->
+<section class="hero-section">
+  <div class="container position-relative" style="z-index:2;">
+    <div class="row align-items-center">
+
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <span class="hero-badge">🛡️ AI-Powered Proctoring</span>
+        <h1 class="hero-title">
+          Exam Security.<br>
+          <span>Deter. Detect.</span><br>
+          Prevent.
+        </h1>
+        <p class="hero-desc">
+          Online AI monitoring to advance your learning and testing program.
+          Validate knowledge, reduce costs, and expand access — anywhere, anytime.
+        </p>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <a href="{% url 'register' %}" class="hero-cta">
+            <i class="fas fa-rocket"></i> Get Started Free
+          </a>
+          <a href="#mission" class="hero-cta-secondary">
+            <i class="fas fa-play-circle"></i> Learn More
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <div class="hero-stat-number">99%</div>
+            <div class="hero-stat-label">Detection Accuracy</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-number">24/7</div>
+            <div class="hero-stat-label">Live Monitoring</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-number">50K+</div>
+            <div class="hero-stat-label">Exams Secured</div>
           </div>
         </div>
       </div>
+
+      <div class="col-lg-6">
+        <div class="hero-img-wrap">
+          <div class="hero-img-glow"></div>
+          <img src="{% static 'nocheatzoneindex.gif' %}" alt="AI Proctoring Dashboard"
+            style="max-height:420px; border-radius:24px;">
+        </div>
+      </div>
+
     </div>
   </div>
-  <br>
-  <br>
-  <section class="content content-bg">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-          <h2 class="text-center mb-0">The NoCheatZone.ai Learning Integrity Platform</h2>
-        </div>
-      </div>
-      <br>
+</section>
 
-      <div class="row align-items-center my-large">
-        <div class="col-md-6">
-          <div id="platform-exam_proctoring" class="platform-animation">
+<!-- ==================== MISSION / VISION / MONITORING CARDS ==================== -->
+<section class="mission-section" id="mission">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-label">What We Stand For</span>
+      <h2 class="section-title">The NoCheatZone.ai Platform</h2>
+      <p class="section-subtitle mx-auto">Making green exam assessment reach the last mile across the globe.</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Mission -->
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon">
+            <i class="fas fa-bullseye"></i>
+          </div>
+          <h3>Our Mission</h3>
+          <p>Making equitable, green exam assessment accessible to every student across the globe, regardless of
+            location.</p>
+          <div class="mt-3">
             <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_omszt4va.json" background="transparent"
-              speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+              speed="1" style="width:160px;height:160px;margin:0 auto;" loop autoplay>
+            </lottie-player>
           </div>
-        </div>
-        <div class="col-md-6 col-lg-5 offset-lg-1">
-          <h1 class="display-2 mb-4">Our Mission</h1>
-          <p class="lead mb-4 text-muted">Making green exam assessment reach last mile across globe.</p>
         </div>
       </div>
 
-      <div class="row align-items-center my-large">
-        <div class="col-md-6 order-md-2 offset-lg-1 ">
-          <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_fdLGjD.json" background="transparent"
-            speed="1" style="width: 600px; height: 500px;" loop autoplay></lottie-player>
-        </div>
-        <div class="col-md-6 col-lg-5 order-md-1">
-          <h1 class="display-2 mb-4">Our Vision</h1>
-          <p class="lead mb-4 text-muted">We believe “Future of world starts in a Classroom” Our Vision is to invent &
-            develop secure and future ready Ed-tech solutions featuring simple functionality.</p>
+      <!-- Vision -->
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon teal">
+            <i class="fas fa-eye"></i>
+          </div>
+          <h3>Our Vision</h3>
+          <p>We believe the "Future of the world starts in a Classroom." We invent secure, future-ready Ed-tech
+            solutions with simple functionality.</p>
+          <div class="mt-3">
+            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_fdLGjD.json" background="transparent"
+              speed="1" style="width:160px;height:160px;margin:0 auto;" loop autoplay>
+            </lottie-player>
+          </div>
         </div>
       </div>
 
-      <div class="row align-items-center my-large">
-        <div class="col-md-6">
-          <div id="platform-exam_proctoring" class="platform-animation">
-            <img class="mb-3 mt-3" src="static\xyz.jpg" alt="" style="height:500px; width: 500px;">
+      <!-- Exam Monitoring -->
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon blue">
+            <i class="fas fa-video"></i>
           </div>
-        </div>
-        <div class="col-md-6 col-lg-5 offset-lg-1">
-          <h1 class="display-2 mb-4">Exam Monitoring</h1>
-          <p class="lead mb-4 text-muted">An all-inclusive remote monitoring solution, including Image verification and
-            computer restrictions.
-          <ul class="feature-list mt-4">
+          <h3>Exam Monitoring</h3>
+          <p>An all-inclusive remote monitoring solution, including image verification and computer restrictions.</p>
+          <ul class="feature-list-styled mt-3">
             <li>Automated Monitoring</li>
             <li>Live Monitoring</li>
             <li>Professional Review</li>
           </ul>
-          </p>
         </div>
       </div>
 
-      <div class="row align-items-center my-large">
-        <div class="col-md-6 order-md-2 offset-lg-1 ">
-          <img class="mb-3 mt-3" src="/static/feature-content-protection-2.png" alt=""
-            style="height:500px; width: 500px;">
-        </div>
-        <div class="col-md-6 col-lg-5 order-md-1">
-          <h1 class="display-2 mb-4">Distribution Prevention</h1>
-          <p class="lead mb-4 text-muted">NoCheatZone.ai prevents test distribution through a host of adjustable
-            settings
-            to restrict the ability to copy and paste, print, download or make screen captures while automatically
-            clearing caches and disabling extensions during the assessment to keep exam content secure.</p>
-        </div>
-      </div>
-
-
-
-
-
-
-
-
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <div id="platform-data_analytics" class="platform-animation mb-3 mt-3">
-            <img class="mb-3 mt-3" src="/static/Aggregate-Exam-Data.png" alt="">
+      <!-- Distribution Prevention -->
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon amber">
+            <i class="fas fa-shield-alt"></i>
           </div>
-        </div>
-        <div class="col-md-6 col-lg-5 offset-lg-1">
-          <h1 class="display-2 mb-4">Data Analytics</h1>
-          <p class="lead mb-4 text-muted">Instant, objective data is immediately available after every assessment, with
-            parameters set by instructors or administrators.</p>
-          <ul class="feature-list mt-4">
-            <li>Administrative Dashboard</li>
-            <li>Student Monitoring</li>
-            <li>Aggregate Exam Data</li>
-          </ul>
+          <h3>Distribution Prevention</h3>
+          <p>Prevents cheating via adjustable settings restricting copy-paste, print, download, and screen captures —
+            auto-clearing caches mid-exam.</p>
         </div>
       </div>
-
-      <div class="row align-items-center my-large">
-        <div class="col-md-6 order-md-2 offset-lg-1 ">
-          <img class="mb-3 mt-3" src="/static/admin-dashboard-1.png" alt="">
-        </div>
-        <div class="col-md-6 col-lg-5 order-md-1">
-          <h1 class="display-2 mb-4">Admin Dashboard</h1>
-          <p class="lead mb-4 text-muted">Create global settings and usage reports that give you actionable information
-            by department, school or institution. Filter activity and reporting by course, test-taker, or exam.</p>
-          <p class="lead mb-4 text-muted">Manage exam parameters, computer requirements, account information, faculty
-            controls, and Gradebook settings.</p>
-        </div>
-      </div>
-
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <div id="platform-professional_review" class="platform-animation mb-3 mt-3">
-          </div>
-          <img class="mb-3 mt-3" src="/static/professional-review.png" alt="">
-        </div>
-        <div class="col-md-6 col-lg-5 offset-lg-1">
-          <h1 class="display-2 mb-4">Professional Review</h1>
-          <p class="lead mb-4 text-muted">Our highly-trained experts are available to analyze exam proctoring for issues
-            of academic dishonesty. We deliver detailed reporting same day, next day or in 3 days based on your needs.
-          </p>
-        </div>
-      </div>
-
-
-      <div class="row align-items-center my-large">
-        <div class="col-md-6 order-md-2 offset-lg-1 ">
-          <img class="" src="/static/actionable-information.png" alt="">
-        </div>
-
-      </div>
-
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <div id="platform-professional_review" class="platform-animation mb-3 mt-3">
-          </div>
-          <img class="mb-3 mt-3" src="/static/live-proctoring.png" alt="">
-        </div>
-        <div class="col-md-6 col-lg-5 offset-lg-1">
-          <h1 class="display-2 mb-4">Live Monitoring</h1>
-          <p class="lead mb-4 text-muted">It allows immediate intervention during an exam and provides full live
-            reporting on demand.</p>
-        </div>
-      </div>
-
     </div>
-  </section>
-  <br>
 
-  <section class="py-5">
-    <div class="container">
-      <div class="card shadow bg-white text-secondary">
-        <div class="card-body">
-          <div class="pt-5 pb-4 mb-3 border-top">
-            <div class="container pb-2">
-              <h2 class="text-center  mb-5 no-xs-margin-bottom">
-                Verify The Authenticity of Your Candidates With Our 3-point Authentication System
-              </h2>
-              <div class="row  py-4">
-                <div class="col-md-5 mt-5">
-                  <div class="row mb-2">
-                    <div class="col-xs-3">
-                      <img loading="lazy" src="/static/examcheck.png" alt="Candidate-enter-registration-details"
-                        class="center-block img img-responsive" style="height:30px; width: 30px;">
+  </div>
+</section>
 
-                    </div>
-                    <div class="col-xs-9 pl-0">
-                      <h4 class="mt-1 pl-0 text-bold">
-                        Candidate enter registration details (Customizable fields)
-                      </h4>
-                    </div>
-                  </div>
-                  <div class="row mb-2">
-                    <div class="col-xs-3">
-                      <img loading="lazy" src="/static/candidateclickspic.png" alt="Candidate-clicks-his-picture"
-                        class="center-block img img-responsive" style="height:45px;">
-                    </div>
-                    <div class="col-xs-9 pl-0">
-                      <h4 class="mt-2 pl-0 text-bold">
-                        Candidate clicks his picture
-                      </h4>
-                    </div>
-                  </div>
-                  <div class="row mb-2">
-                    <div class="col-xs-3">
-                      <img loading="lazy" src="/static/idverify.png" alt="Candidate-verifies-his-ID-proof"
-                        class="center-block img img-responsive" style="height:45px;">
+<!-- ==================== DATA ANALYTICS & ADMIN ==================== -->
+<section class="content-section">
+  <div class="container">
+    <div class="row align-items-center g-5 mb-5">
+      <div class="col-lg-5">
+        <span class="section-label">Insights</span>
+        <h2 class="section-title">Data Analytics</h2>
+        <p class="section-subtitle mb-4">Instant, objective data is immediately available after every assessment, with
+          parameters set by instructors or administrators.</p>
+        <ul class="feature-list-styled">
+          <li>Administrative Dashboard</li>
+          <li>Student Monitoring</li>
+          <li>Aggregate Exam Data</li>
+        </ul>
+      </div>
+      <div class="col-lg-7">
+        <div class="content-visual">
+          <img src="{% static 'Aggregate-Exam-Data.png' %}" alt="Aggregate Exam Data"
+            style="width:100%; border-radius:20px; box-shadow:0 12px 48px rgba(0,0,0,0.12);">
+        </div>
+      </div>
+    </div>
 
-                    </div>
-                    <div class="col-xs-9 pl-0">
-                      <h4 class="mt-2 pl-0 text-bold">
-                        If Candidate face is verified then only it allow to give exam.
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-7 col-sm-7">
+    <div class="row align-items-center g-5 flex-row-reverse">
+      <div class="col-lg-5">
+        <span class="section-label">Management</span>
+        <h2 class="section-title">Admin Dashboard</h2>
+        <p class="section-subtitle mb-4">Create global settings and usage reports by department, school or institution.
+          Filter activity by course, test-taker, or exam.</p>
+        <p class="section-subtitle">Manage exam parameters, computer requirements, account information, faculty
+          controls, and Gradebook settings.</p>
+      </div>
+      <div class="col-lg-7">
+        <div class="content-visual">
+          <img src="{% static 'admin-dashboard-1.png' %}" alt="Admin Dashboard"
+            style="width:100%; border-radius:20px; box-shadow:0 12px 48px rgba(0,0,0,0.12);">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-                  <picture>
-                    <img loading="lazy" src="/static/mettlverify.jpg" alt="Candidate-Authentication"
-                      class="img img-responsive" style="height:500px; width: 600px;">
-                  </picture>
-                </div>
-              </div>
-            </div>
+<!-- ==================== PROFESSIONAL REVIEW & LIVE MONITORING ==================== -->
+<section class="content-section alt-bg">
+  <div class="container">
+    <div class="row align-items-center g-5 mb-5">
+      <div class="col-lg-5">
+        <span class="section-label">Expert Review</span>
+        <h2 class="section-title">Professional Review</h2>
+        <p class="section-subtitle">Our highly-trained experts analyze exam proctoring for academic dishonesty. We
+          deliver detailed reporting same-day, next-day or within 3 days based on your needs.</p>
+      </div>
+      <div class="col-lg-7">
+        <div class="content-visual">
+          <img src="{% static 'professional-review.png' %}" alt="Professional Review"
+            style="width:100%; border-radius:20px; box-shadow:0 12px 48px rgba(0,0,0,0.12);">
+        </div>
+      </div>
+    </div>
+
+    <div class="row align-items-center g-5 flex-row-reverse">
+      <div class="col-lg-5">
+        <span class="section-label">Real-time</span>
+        <h2 class="section-title">Live Monitoring</h2>
+        <p class="section-subtitle">Allow immediate intervention during an exam and provides full live reporting on
+          demand. Our proctors are always watching.</p>
+      </div>
+      <div class="col-lg-7">
+        <div class="content-visual">
+          <img src="{% static 'live-proctoring.png' %}" alt="Live Monitoring"
+            style="width:100%; border-radius:20px; box-shadow:0 12px 48px rgba(0,0,0,0.12);">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== AUTHENTICATION SECTION ==================== -->
+<section class="auth-section">
+  <div class="container">
+    <div class="row align-items-center g-5">
+
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <span class="section-label" style="color:var(--soft-blue);">3-Point Authentication</span>
+        <h2 class="section-title" style="color:#fff;">Verify The Authenticity of Your Candidates</h2>
+        <p style="color:rgba(255, 255, 255, 0.7); font-size:1rem; line-height:1.7; margin-bottom:36px;">Our multi-layer
+          authentication
+          system ensures only the right candidate sits for the exam, every time.</p>
+
+        <div class="auth-step">
+          <div class="auth-step-icon">
+            <img src="{% static 'examcheck.png' %}" alt="Registration">
+          </div>
+          <div>
+            <p class="auth-step-title">Step 1 — Enter Registration Details</p>
+            <p class="auth-step-desc">Candidate enters customizable registration fields — name, ID, institution — before
+              the exam begins.</p>
+          </div>
+        </div>
+
+        <div class="auth-step">
+          <div class="auth-step-icon">
+            <img src="{% static 'candidateclickspic.png' %}" alt="Click Picture">
+          </div>
+          <div>
+            <p class="auth-step-title">Step 2 — Capture Live Photo</p>
+            <p class="auth-step-desc">Candidate clicks their picture live to ensure real-time presence verification.</p>
+          </div>
+        </div>
+
+        <div class="auth-step">
+          <div class="auth-step-icon">
+            <img src="{% static 'idverify.png' %}" alt="ID Verification">
+          </div>
+          <div>
+            <p class="auth-step-title">Step 3 — Face Verification</p>
+            <p class="auth-step-desc">If the candidate's face matches registered data, exam access is granted.
+              Otherwise, access is denied.</p>
           </div>
         </div>
       </div>
+
+      <div class="col-lg-6">
+        <div style="border-radius:24px; overflow:hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.5);">
+          <img src="{% static 'mettlverify.jpg' %}" alt="Candidate Authentication" style="width:100%; display:block;">
+        </div>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="py-5">
-    <div class="container">
-      <div class="card shadow bg-white text-secondary">
-        <div class="card-body">
-
-          <div class="container">
-            <div class="row">
-              <div class="col-10 offset-1">
-                <h1 class="text-center">NoCheatZone.ai is Best Suited For</h1><br>
-                <div class="row  justify-content-center feature-container">
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/jbfdnsh.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Universities</h6>
-                          <p class="text-center">NoCheatZone.ai offers a superior proctored online exam experience for
-                            candidates and at the same time promote excellence and integrity for education programs.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i14.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Assessment Providers</h6>
-                          <p class="text-center">Assessments are available anywhere anytime for candidates. Proview's
-                            cognitive monitoring technology protects the test and disables false positives.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i15.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">E-Learning Programs</h6>
-                          <p class="text-center">Reduce your expenditure on test centers and inefficient manual
-                            monitoring. Integrate NoCheatZone to your existing test engine or use NoCheatZone.ai
-                            secure
-                            test engine to deliver tests.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+<!-- ==================== BEST SUITED FOR ==================== -->
+<section class="content-section" id="solutions">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-label">Solutions</span>
+      <h2 class="section-title">NoCheatZone.ai is Best Suited For</h2>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4">
+        <div class="suited-card">
+          <img src="{% static 'jbfdnsh.png' %}" alt="Universities">
+          <h5>Universities</h5>
+          <p>NoCheatZone.ai offers a superior proctored online exam experience for candidates while promoting excellence
+            and integrity for education programs.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="suited-card">
+          <img src="{% static 'i14.png' %}" alt="Assessment Providers">
+          <h5>Assessment Providers</h5>
+          <p>Assessments are available anywhere, anytime. Our cognitive monitoring technology protects the test and
+            disables false positives.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="suited-card">
+          <img src="{% static 'i15.png' %}" alt="E-Learning Programs">
+          <h5>E-Learning Programs</h5>
+          <p>Reduce expenditure on test centers and inefficient manual monitoring. Integrate NoCheatZone to your
+            existing test engine.</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="py-5">
-    <div class="container">
-      <div class="card shadow bg-white text-secondary">
-        <div class="card-body">
-
-          <div class="container">
-            <div class="row">
-              <div class="col-10 offset-1">
-                <h1 class="text-center">From Global to Granular, See the Key Performance Indicators that Matter</h1>
-                <h3 class="text-center">Committed to Your Success</h3>
-                <div class="row  justify-content-center feature-container">
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i1.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Protect Your Credibility</h6>
-                          <p class="text-center">Technology that Crushes Brick and Mortar Test Centers.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i2.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Save Money as You Grow</h6>
-                          <p class="text-center">Remove the burden of costly physical infrastructure without sacrificing
-                            security.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i3.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Test Any Time, Anywhere</h6>
-                          <p class="text-center">We stay up late so your test-takers have the freedom to test when it’s
-                            convenient from anywhere in the world.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i4.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Performance Insights</h6>
-                          <p class="text-center">Track metrics and trends across all your exams and compare to industry
-                            benchmarks.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i5.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Exam Facilitator Dashboard</h6>
-                          <p class="text-center">Review and inspect metrics for each individual exam.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src=/static/i6.png
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Incident Reports</h6>
-                          <p class="text-center">Investigate a specific test-taker’s session and determine if action is
-                            needed.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i7.png"
-                              alt="Dedicated Account Team"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Dedicated Account Team</h6>
-                          <p class="text-center">Every client and test admin gets a dedicated ProctorU team who answer
-                            questions and help with exam setup.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i8.png"
-                              alt="Free Technical Support"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Free Technical Support</h6>
-                          <p class="text-center">We offer free exam-related technical support 24/7/365 via phone, email,
-                            live chat, and remote support sessions. Exam facilitators also have their own hotline for
-                            quick help.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i9.png"
-                              alt="Unmatched Scalability"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Unmatched Scalability</h6>
-                          <p class="text-center">Securing millions of exams online each year, with the largest certified
-                            proctor workforce in the world.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i10.png" alt="User Satisfaction">
-                          </p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">User Satisfaction</h6>
-                          <p class="text-center">Industry leading test-taker satisfaction.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i11.png"
-                              alt="Unparalleled Uptime"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Unparalleled Uptime</h6>
-                          <p class="text-center">24/7 access to scheduling, monitoring and reporting.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row ">
-                        <div class="col-12">
-                          <p><img class="img-fluid services-feature-img" src="/static/i12.png" alt="Technology"></p>
-                        </div>
-                        <div class="col-12">
-                          <h6 class="text-center">Advanced Technology</h6>
-                          <p class="text-center">We're dedicated to investing in the latest technologies as market needs
-                            evolve. </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+<!-- ==================== KPI SECTION ==================== -->
+<section class="kpi-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-label">Performance</span>
+      <h2 class="section-title">From Global to Granular</h2>
+      <p class="section-subtitle mx-auto">Key Performance Indicators that Matter — Committed to Your Success</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i1.png' %}" alt="Protect Your Credibility">
+          <h6>Protect Your Credibility</h6>
+          <p>Technology that crushes brick and mortar test centers.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i2.png' %}" alt="Save Money as You Grow">
+          <h6>Save Money as You Grow</h6>
+          <p>Remove costly physical infrastructure without sacrificing security.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i3.png' %}" alt="Test Any Time, Anywhere">
+          <h6>Test Any Time, Anywhere</h6>
+          <p>Freedom to test when it's convenient from anywhere in the world.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i4.png' %}" alt="Performance Insights">
+          <h6>Performance Insights</h6>
+          <p>Track metrics and trends across all exams compared to industry benchmarks.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i5.png' %}" alt="Exam Facilitator Dashboard">
+          <h6>Exam Facilitator Dashboard</h6>
+          <p>Review and inspect metrics for each individual exam.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i6.png' %}" alt="Incident Reports">
+          <h6>Incident Reports</h6>
+          <p>Investigate a specific test-taker's session and determine if action is needed.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i7.png' %}" alt="Dedicated Account Team">
+          <h6>Dedicated Account Team</h6>
+          <p>Every client gets a dedicated team who answers questions and helps with exam setup.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i8.png' %}" alt="Free Technical Support">
+          <h6>Free Technical Support</h6>
+          <p>24/7/365 support via phone, email, live chat, and remote sessions.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i9.png' %}" alt="Unmatched Scalability">
+          <h6>Unmatched Scalability</h6>
+          <p>Securing millions of exams online each year with the largest certified proctor workforce.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i10.png' %}" alt="User Satisfaction">
+          <h6>User Satisfaction</h6>
+          <p>Industry leading test-taker satisfaction scores, year after year.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i11.png' %}" alt="Unparalleled Uptime">
+          <h6>Unparalleled Uptime</h6>
+          <p>24/7 access to scheduling, monitoring and reporting.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="kpi-card">
+          <img src="{% static 'i12.png' %}" alt="Advanced Technology">
+          <h6>Advanced Technology</h6>
+          <p>Dedicated to investing in the latest technologies as market needs evolve.</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <br>
+<!-- ==================== CONTACT / GET IN TOUCH ==================== -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-label">Contact</span>
+      <h2 class="section-title">Get in Touch Today</h2>
+      <p class="section-subtitle mx-auto">We're here to help. Reach out to our team for support, partnerships, or
+        general inquiries.</p>
+    </div>
 
+    <div class="map-wrapper">
+      <iframe title="BMIT Institute Location" id="gmap_canvas"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3801.644762565468!2d75.80149117439474!3d17.666976194692122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc5d3815ef6a2ff%3A0xd10cf5692c676353!2sBMIT%20Institute%2C%20Solapur!5e0!3m2!1sen!2sin!4v1772172956105!5m2!1sen!2sin"
+        width="100%" height="400" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
 
-
-  <br>
-
-  <section class="py-5">
-    <div class="container">
-      <div class="card shadow bg-white text-secondary">
-        <div class="card-body">
-
-          <div class="container">
-            <div class="row">
-              <div class="col-10 offset-1">
-                <h1 class="text-center">Get in touch today</h1><br>
-                <div class="row  justify-content-center feature-container">
-
-                  <iframe class="map rounded" title="map" id="gmap_canvas"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3801.644762565468!2d75.80149117439474!3d17.666976194692122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc5d3815ef6a2ff%3A0xd10cf5692c676353!2sBMIT%20Institute%2C%20Solapur!5e0!3m2!1sen!2sin!4v1772172956105!5m2!1sen!2sin"
-                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-                <p></p>
-                <p></p>
-                <div class="row  justify-content-center feature-container">
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row center-block">
-                        <div class="icon-box mb-4">
-                          <div class="icon icon-dark mb-4">
-                            <span class="fas fa-map-marker-alt"></span>
-                          </div>
-                          <h2 class="h5 icon-box-title">Visit us</h2>
-                          <span>
-                            Belati, Solapur-Mangalwedha-Kolhapur State Highway,
-                            <br>Solapur,
-                            <br>Maharashtra,413002.
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row align-items-center">
-                        <div class="icon-box mb-4">
-                          <div class="icon icon-dark mb-4">
-                            <span class="fas fa-phone-volume"></span>
-                          </div>
-                          <h2 class="h5 icon-box-title">Technical & Administrative Support</h2>
-                          <p class="text-success font-weight-bold mb-2">24/7 Available</p>
-                          <div class="mt-2">
-                            <a href="tel:+919145397654">+91 9145397654</a>
-                            <br> <a href="tel:+918975744234">+91 8975744234</a>
-                            <br> <a href="tel:+919156893352">+91 9156893352</a>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-4">
-                    <div class="container">
-                      <div class="row align-items-center">
-                        <div class="icon-box mb-4">
-                          <div class="icon icon-dark mb-4">
-                            <span class="far fa-paper-plane"></span>
-                          </div>
-                          <h2 class="h5 icon-box-title">Email</h2>
-                          <div class="mt-2">
-                            <a href="mailto:nandiwalebalu738@gmail.com">nandiwalebalu738@gmail.com</a>
-                            <br> <a href="mailto:manasdhotre995@gmail.com">manasdhotre995@gmail.com</a>
-                            <br> <a href="shivrajtalwar07@gmail.com">shivrajtalwar07@gmail.com</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="contact-info-card">
+          <div class="contact-info-icon">
+            <i class="fas fa-map-marker-alt"></i>
           </div>
+          <h5>Visit Us</h5>
+          <address>
+            Belati, Solapur-Mangalwedha-Kolhapur State Highway,<br>
+            Solapur, Maharashtra, 413002.
+          </address>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="contact-info-card">
+          <div class="contact-info-icon">
+            <i class="fas fa-phone-volume"></i>
+          </div>
+          <h5>Technical &amp; Administrative Support</h5>
+          <span class="available-badge">✔ 24/7 Available</span>
+          <a href="tel:+919145397654">+91 9145397654</a>
+          <a href="tel:+918975744234">+91 8975744234</a>
+          <a href="tel:+919156893352">+91 9156893352</a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="contact-info-card">
+          <div class="contact-info-icon">
+            <i class="far fa-paper-plane"></i>
+          </div>
+          <h5>Email Us</h5>
+          <a href="mailto:nandiwalebalu738@gmail.com">nandiwalebalu738@gmail.com</a>
+          <a href="mailto:manasdhotre995@gmail.com">manasdhotre995@gmail.com</a>
+          <a href="mailto:shivrajtalwar07@gmail.com">shivrajtalwar07@gmail.com</a>
         </div>
       </div>
     </div>
-    </div>
-    </div>
 
-    </div>
-    </div>
-  </section>
-  {% endblock %}
+  </div>
+</section>
+
+{% endblock %}

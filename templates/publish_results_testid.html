@@ -1,44 +1,172 @@
 {% extends 'professor_dashboard.html' %}
 {% block body %}
-<div class="row align-items-center d-flex  justify-content-center">
+
+<style>
+    /* Card Box */
+    .card {
+        border-radius: 14px;
+        background: #ffffff;
+        transition: all 0.4s ease;
+    }
+
+    /* Card Hover Animation */
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(0, 123, 255, 0.15);
+    }
+
+    /* Heading */
+    h3 {
+        color: #1a73e8;
+        font-weight: 700;
+        animation: fadeSlide 1s ease;
+    }
+
+    /* Dropdown */
+    .custom-select {
+        border-radius: 10px;
+        border: 1px solid #9ec9ff;
+        transition: all 0.3s ease;
+    }
+
+    /* Hover */
+    .custom-select:hover {
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    }
+
+    /* Focus */
+    .custom-select:focus {
+        border-color: #1a73e8;
+        box-shadow: 0 0 10px rgba(26, 115, 232, 0.4);
+    }
+
+    /* Button */
+    .btn-primary {
+        background: #1a73e8;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    /* Button Hover */
+    .btn-primary:hover {
+        background: #0d5bd7;
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.35);
+    }
+
+    /* Page Animation */
+    .row {
+        animation: fadeInPage 0.8s ease;
+    }
+
+    @keyframes fadeInPage {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Heading Animation */
+    @keyframes fadeSlide {
+        from {
+            opacity: 0;
+            transform: translateY(-15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+
+<div class="row align-items-center d-flex justify-content-center">
+
     <div class="col-12 mb-4">
-        <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
-            <div class="card-body align-items-center d-flex justify-content-center">     
+
+        <div class="card border-light shadow-sm components-section align-items-center d-flex justify-content-center">
+
+            <div class="card-body align-items-center d-flex justify-content-center">
+
                 <div class="row mb-4">
+
                     {% if cresults %}
+
                     <div class="col-lg-12 col-sm-16">
-                      <h3 class="h3 text-center">PUBLISH RESULTS </h3>  
+                        <h3 class="h3 text-center">PUBLISH RESULTS</h3>
                     </div>
+
                     <div class="card-body">
-							    <form action="/viewresults" method="POST" class="mt-4">
-                                    {% csrf_token %}
-                                    <div class="form-group text-center">
-                                        <div class="form-group">
-                                            <label class="my-1 mr-2" for="livebox">Choose Exam ID:</label>
-                                            <select class="custom-select my-1 mr-sm-2" id="livebox" name="choosetid" required>
-                                                {% for test in cresults %}
-                                                <option value="{{ test }}">{{ test }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    <input type="submit" class="btn btn-block btn-primary" value="VIEW STUDENTS INSERTED MARKS"/>
-                                </form>
+
+                        <form action="/viewresults" method="POST" class="mt-4">
+
+                            {% csrf_token %}
+
+                            <div class="form-group text-center">
+
+                                <div class="form-group">
+
+                                    <label class="my-1 mr-2" for="livebox">
+                                        Choose Exam ID:
+                                    </label>
+
+                                    <select class="custom-select my-1 mr-sm-2" id="livebox" name="choosetid" required>
+
+                                        {% for test in cresults %}
+                                        <option value="{{ test }}">{{ test }}</option>
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+
+                                <input type="submit" class="btn btn-block btn-primary"
+                                    value="VIEW STUDENTS INSERTED MARKS" />
+
+                        </form>
+
                     </div>
+
                     {% else %}
+
                     <div class="col-lg-12 col-sm-16">
-                        <center><lottie-player src="https://assets7.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player></center>
+
+                        <center>
+                            <lottie-player src="https://assets7.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"
+                                background="transparent" speed="1" style="width:300px;height:300px;" loop autoplay>
+                            </lottie-player>
+                        </center>
+
                         <h3 class="h3 text-center">
+
                             No Records Found!
                             <br>
                             Or
                             <br>
                             Note: Once the Exam ID results is published then it can't updated again!
-                        </h3>  
-                      </div>
-                    {% endif %}
-                            </div>
-                        </div>
+
+                        </h3>
+
                     </div>
+
+                    {% endif %}
+
                 </div>
+
             </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

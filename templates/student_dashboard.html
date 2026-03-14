@@ -124,6 +124,18 @@
       color: #38bdf8;
     }
 
+    /* Active State for Sidebar links */
+    .sidebar .nav-link.active {
+      background: rgba(101, 163, 13, 0.2) !important;
+      color: #A3E635 !important;
+      border-left: 4px solid #65A30D;
+      transform: translateX(8px);
+    }
+
+    .sidebar .nav-link.active .sidebar-icon {
+      color: #A3E635 !important;
+    }
+
     .user-card h2 {
       background: linear-gradient(90deg, #38bdf8, #818cf8);
       -webkit-background-clip: text;
@@ -287,7 +299,6 @@
               style="font-size: 1.4rem; letter-spacing: 0.5px; background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite;">NoCheatZone</span>
           </a>
         </li>
-
         <li class="nav-item mb-3">
           <a href="#" onclick="return funStartExam()" class="nav-link text-white text-decoration-none">
             <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
@@ -296,21 +307,24 @@
         </li>
 
         <li class="nav-item mb-3">
-          <a href="{% url 'student_test_history' %}" class="nav-link text-white text-decoration-none">
+          <a href="{% url 'student_test_history' %}"
+            class="nav-link text-white text-decoration-none {% if request.resolver_match.url_name == 'student_test_history' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-history"></span></span>
             <span class="sidebar-text">Exam History</span>
           </a>
         </li>
 
         <li class="nav-item mb-3">
-          <a href="{% url 'tests_given' %}" class="nav-link text-white text-decoration-none">
+          <a href="{% url 'tests_given' %}"
+            class="nav-link text-white text-decoration-none {% if request.resolver_match.url_name == 'tests_given' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-chart-bar"></span></span>
             <span class="sidebar-text">Results</span>
           </a>
         </li>
 
         <li class="nav-item mb-3">
-          <a href="{% url 'growth_rate' %}" class="nav-link text-white text-decoration-none">
+          <a href="{% url 'growth_rate' %}"
+            class="nav-link text-white text-decoration-none {% if request.resolver_match.url_name == 'growth_rate' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-chart-line"></span></span>
             <span class="sidebar-text">Growth Rate</span>
           </a>
@@ -319,13 +333,15 @@
 
         <li role="separator" class="dropdown-divider mt-4 mb-3 border-black"></li>
         <li class="nav-item mb-3">
-          <a href="/report_student" class="nav-link text-white text-decoration-none">
+          <a href="/report_student"
+            class="nav-link text-white text-decoration-none {% if request.path == '/report_student' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-bug"></span></span>
             <span class="sidebar-text">Report Problems</span>
           </a>
         </li>
         <li class="nav-item mb-4">
-          <a href="/changepassword_student" class="nav-link d-flex align-items-center text-white text-decoration-none">
+          <a href="/changepassword_student"
+            class="nav-link d-flex align-items-center text-white text-decoration-none {% if request.path == '/changepassword_student' %}active{% endif %}">
             <span class="sidebar-icon"><span class="fas fa-key"></span></span>
             <span class="sidebar-text">Change Password</span>
           </a>
@@ -343,17 +359,10 @@
   </nav>
 
   <main class="content">
-    <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
-      <div class="container-fluid px-0">
-        <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
-          <div class="h-100 row align-items-center">
-            {% include 'includes/_messages.html' %}
-            {% block body %}{% endblock %}
-
-          </div>
-        </div>
-      </div>
-    </nav>
+    <div class="container-fluid px-4 pt-3">
+      {% include 'includes/_messages.html' %}
+      {% block body %}{% endblock %}
+    </div>
   </main>
 
   <script>

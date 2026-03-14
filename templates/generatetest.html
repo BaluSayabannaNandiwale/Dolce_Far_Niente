@@ -1,39 +1,175 @@
 {% extends 'professor_dashboard.html' %}
 {% block body %}
-<div class="row align-items-center d-flex  justify-content-center">
+
+<style>
+    /* Card Styling */
+    .card {
+        border-radius: 14px;
+        background: linear-gradient(145deg, #ffffff, #eef7ff);
+        transition: all 0.4s ease;
+    }
+
+    /* Card Hover */
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(0, 123, 255, 0.18);
+    }
+
+    /* Heading Style */
+    h3 {
+        color: #2c7be5;
+        font-weight: 700;
+        letter-spacing: 1px;
+        animation: fadeSlide 1s ease;
+    }
+
+    /* Animated Inputs */
+    .form-control,
+    .custom-select {
+        border-radius: 10px;
+        border: 1px solid #d6e8ff;
+        transition: all 0.35s ease;
+        position: relative;
+    }
+
+    /* Hover Effect */
+    .form-control:hover,
+    .custom-select:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.15);
+    }
+
+    /* Focus Glow Effect */
+    .form-control:focus,
+    .custom-select:focus {
+        border-color: #4da3ff;
+        box-shadow: 0 0 12px rgba(77, 163, 255, 0.45);
+        transform: scale(1.01);
+    }
+
+    /* Button Style */
+    .btn-primary {
+        background: linear-gradient(135deg, #4da3ff, #1e90ff);
+        border: none;
+        border-radius: 10px;
+        padding: 10px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    /* Button Hover */
+    .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.35);
+    }
+
+    /* Label Animation */
+    label {
+        transition: all 0.3s ease;
+    }
+
+    /* Smooth Page Animation */
+    @keyframes fadeSlide {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Input Load Animation */
+    .form-group {
+        animation: fadeInput 0.8s ease;
+    }
+
+    @keyframes fadeInput {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+
+<div class="row align-items-center d-flex justify-content-center">
     <div class="col-12 mb-4">
-        <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
-            <div class="card-body align-items-center d-flex justify-content-center">     
+
+        <div class="card border-light shadow-sm components-section align-items-center d-flex justify-content-center">
+
+            <div class="card-body align-items-center d-flex justify-content-center">
+
                 <div class="row mb-4">
+
                     <div class="col-lg-12 col-sm-16">
-                      <h3 class="h3 text-center">GENERATE QUESTIONS & ANSWERS</h3>  
+                        <h3 class="h3 text-center">GENERATE QUESTIONS & ANSWERS</h3>
                     </div>
-<center><lottie-player src="https://assets3.lottiefiles.com/packages/lf20_6CrYF1.json"  background="transparent"  speed="1"  style="width: 400px; height: 300px;"  loop  autoplay></lottie-player></center>
+
+                    <center>
+                        <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_6CrYF1.json"
+                            background="transparent" speed="1" style="width: 400px; height: 300px;" loop autoplay>
+                        </lottie-player>
+                    </center>
+
                     <div class="card-body">
-                              <form method="POST" action="{% url 'generate_test' %}">
-                                    {% csrf_token %}
-                                <div class="mb-4">
-                                  <div class="form-group">
-                                      <label class="h6" for="exampleFormControlTextarea1">Input Text</label>
-                                        <textarea name="itext" class="form-control" placeholder="Input Text?" rows="6" required></textarea>
-                                    </div>    
-                                    <div class="form-group">
-                                        <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Choose Question Type</label>
-                                        <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="test_type" required>
-                                            <option value="objective">Objective</option>
-                                            <option value="subjective">Subjective</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                      <label class="h6" for="exampleFormControlTextarea1">No of Questions</label>
-                                        <input type="number" name="noq" class="form-control" placeholder="No. of Questions" min="1" required>
-                                    </div>  
-    <input type="submit" class="btn btn-primary" value="Generate">
-  </form>
-  </div>
-</div>
-</div>
-</div>
+
+                        <form method="POST" action="{% url 'generate_test' %}">
+                            {% csrf_token %}
+
+                            <div class="mb-4">
+
+                                <!-- TEXT AREA -->
+                                <div class="form-group">
+                                    <label class="h6">Input Text</label>
+                                    <textarea name="itext" class="form-control" placeholder="Input Text?" rows="6"
+                                        required>
+                                    </textarea>
+                                </div>
+
+                                <!-- SELECT BOX -->
+                                <div class="form-group">
+                                    <label class="my-1 mr-2">Choose Question Type</label>
+
+                                    <select class="custom-select my-1 mr-sm-2" name="test_type" required>
+
+                                        <option value="objective">Objective</option>
+                                        <option value="subjective">Subjective</option>
+
+                                    </select>
+                                </div>
+
+                                <!-- NUMBER INPUT -->
+                                <div class="form-group">
+                                    <label class="h6">No of Questions</label>
+
+                                    <input type="number" name="noq" class="form-control" placeholder="No. of Questions"
+                                        min="1" required>
+                                </div>
+
+                                <!-- BUTTON -->
+                                <input type="submit" class="btn btn-primary" value="Generate">
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 </div>
+
 {% endblock %}

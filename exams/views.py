@@ -1,21 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.decorators.http import require_http_methods, require_GET
+from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from datetime import timedelta
 from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect
+from django.core.mail import send_mail
+from django.conf import settings
 import json
 
 from .models import Teacher, Question, StudentTestInfo, Student, LongQA, PracticalQA
 from proctoring.models import ProctoringLog, WindowEstimationLog
 from .models import Teacher, Question, StudentTestInfo, Student, LongQA, PracticalQA, ViolationLog
 from .forms import GiveTestForm
-import random
-import cv2
-import numpy as np
 import base64
 from PIL import Image
 from io import BytesIO
@@ -175,7 +172,7 @@ def give_test_exam_view(request, test_id):
                 # ignore errors here; not fatal for navigation
                 pass
 
-        # Handle submit action (save answer)
+        # Handle submit action (save answer and move to next question)
         if action == 'submit':
             qid = request.POST.get('qid') or (q_list[question_index] if question_index < total else None)
             ans = request.POST.get('ans') or request.POST.get('selected_answer')
@@ -188,8 +185,9 @@ def give_test_exam_view(request, test_id):
                     defaults={'ans': ans}
                 )
 
-            # Stay on same question after submit
-            return redirect(f"/give-test/{test_id}/?q={question_index}")
+            # Move to next question after submit, or stay on last question
+            new_index = min(question_index + 1, max(0, total - 1))
+            return redirect(f"/give-test/{test_id}/?q={new_index}")
 
         # Bookmark action: use session to store bookmarks
         if action == 'bookmark':
@@ -391,8 +389,34 @@ def give_test_exam_view(request, test_id):
 
         # determine qid for current index (used by template initial hidden field)
         current_qid = questions_qids[question_index] if 0 <= question_index < total_questions else ""
+        
+        # Get bookmarks for this test from session
+        bookmarks = request.session.get('bookmarks', {}).get(test_id, [])
+        if isinstance(bookmarks, set):
+            bookmarks = list(bookmarks)
+        
+        # Fetch existing student answers for this test
+        student_answers = Student.objects.filter(
+            uid=request.user,
+            test_id=test_id
+        ).values('qid', 'ans')
+        
+        # Convert answers to dictionary format for JavaScript
+        answers_dict = {}
+        for answer in student_answers:
+            # Find the question index (1-based) for this qid
+            try:
+                question_index = questions_qids.index(answer['qid']) + 1
+                answers_dict[str(question_index)] = {
+                    'marked': answer['ans'],
+                    'status': 'SUBMITTED'  # Existing answers are considered submitted
+                }
+            except ValueError:
+                # qid not found in questions_qids, skip
+                continue
+        
         context.update({
-            "answers": "{}",
+            "answers": json.dumps(answers_dict),
             "q": q, "a": a, "b": b, "c": c, "d": d,
             "marks": marks,
             "question_index": question_index,
@@ -400,6 +424,7 @@ def give_test_exam_view(request, test_id):
             "total_questions": total_questions,
             "time_left": time_left_val,
             "question_list": questions_qids,
+            "bookmarks_json": json.dumps(bookmarks),
         })
         return render(request, "testquiz.html", context)
 
@@ -1016,6 +1041,54 @@ def share_details_view(request, test_id):
 
 
 @login_required
+@require_POST
+@csrf_exempt
+def share_details_emails_view(request):
+    """Send exam share details to the provided student email list."""
+    if request.user.user_type != "teacher":
+        return redirect("student_index")
+
+    test_id = request.POST.get("tid")
+    teacher = Teacher.objects.filter(test_id=test_id, uid=request.user).first()
+    if not teacher:
+        messages.error(request, "Test not found or you do not have permission to share it.")
+        return redirect("disptests")
+
+    emails_raw = request.POST.get("emailssharelist", "")
+    emails = [e.strip() for e in emails_raw.split(",") if e.strip()]
+    if not emails:
+        messages.error(request, "Please provide at least one email address.")
+        return redirect("share_details", test_id=test_id)
+
+    subject = f"Exam details for {teacher.subject} - {teacher.topic}"
+    message = (
+        f"Test ID: {teacher.test_id}\n"
+        f"Subject: {teacher.subject}\n"
+        f"Topic: {teacher.topic}\n"
+        f"Duration: {teacher.duration} seconds\n"
+        f"Start: {teacher.start}\n"
+        f"End: {teacher.end}\n"
+        f"Password: {teacher.password}\n"
+        f"Negative Marks: {teacher.neg_marks}%\n"
+        f"Calculator Allowed: {'YES' if teacher.calc == 1 else 'NO'}\n"
+    )
+
+    try:
+        send_mail(
+            subject,
+            message,
+            getattr(settings, "DEFAULT_FROM_EMAIL", None) or settings.EMAIL_HOST_USER,
+            emails,
+            fail_silently=False,
+        )
+        messages.success(request, f"Exam details emailed to {len(emails)} student(s).")
+    except Exception as e:
+        messages.error(request, f"Failed to send emails: {e}")
+
+    return redirect("share_details", test_id=test_id)
+
+
+@login_required
 @require_GET
 def livemonitoringtid_view(request):
     if request.user.user_type != "teacher":
@@ -1110,6 +1183,21 @@ def create_test_view(request):
             test_type='objective'
         )
         
+        # Add dummy questions
+        for i in range(1, 6):
+            Question.objects.create(
+                test_id=test_id,
+                qid=str(i),
+                q=f"Dummy Question {i} for {subject} - {topic}",
+                a="Option A",
+                b="Option B",
+                c="Option C",
+                d="Option D",
+                ans="a",
+                marks=1,
+                uid=request.user
+            )
+        
         messages.success(request, f"Test '{test_id}' created successfully!")
         return redirect('disptests')
     
@@ -1163,6 +1251,16 @@ def create_test_lqa_view(request):
             test_type='subjective'
         )
         
+        # Add dummy questions
+        for i in range(1, 6):
+            LongQA.objects.create(
+                test_id=test_id,
+                qid=str(i),
+                q=f"Discuss {topic} in the context of {subject} (Dummy Question {i}).",
+                marks=5,
+                uid=request.user
+            )
+        
         messages.success(request, f"Subjective test '{test_id}' created successfully!")
         return redirect('disptests')
     
@@ -1214,6 +1312,17 @@ def create_test_pqa_view(request):
             test_type='practical'
         )
         
+        # Add dummy questions
+        for i in range(1, 6):
+            PracticalQA.objects.create(
+                test_id=test_id,
+                qid=str(i),
+                q=f"Write a program to demonstrate {topic} (Dummy Question {i}).",
+                compiler=1,
+                marks=10,
+                uid=request.user
+            )
+        
         messages.success(request, f"Practical test '{test_id}' created successfully!")
         return redirect('disptests')
     
@@ -1247,7 +1356,7 @@ def update_disp_questions_view(request):
             # Get long answer questions
             questions = LongQA.objects.filter(test_id=test_id, uid=request.user)
             callresults = [{'qid': q.qid, 'q': q.q, 'marks': q.marks, 'test_id': test_id} for q in questions]
-            return render(request, "updatedispquesLQA.html", {"callresults": callresults})
+            return render(request, "updatedispquesLQA.html", {"callresults": callresults, "tid": test_id})
         elif test_type == 'practical':
             # Get practical questions
             questions = PracticalQA.objects.filter(test_id=test_id, uid=request.user)
@@ -1258,7 +1367,7 @@ def update_disp_questions_view(request):
                 'compiler': q.compiler,
                 'test_id': test_id
             } for q in questions]
-            return render(request, "updatedispquesPQA.html", {"callresults": callresults})
+            return render(request, "updatedispquesPQA.html", {"callresults": callresults, "tid": test_id})
         else:  # Default to objective
             # Get objective questions
             questions = Question.objects.filter(test_id=test_id, uid=request.user)
@@ -1273,7 +1382,7 @@ def update_disp_questions_view(request):
                 'marks': q.marks,
                 'test_id': test_id
             } for q in questions]
-            return render(request, "updatedispques.html", {"callresults": callresults})
+            return render(request, "updatedispques.html", {"callresults": callresults, "tid": test_id})
     
     # If not POST, redirect back to updatetidlist
     return redirect('updatetidlist')
@@ -1801,35 +1910,60 @@ def view_results_view(request):
             messages.error(request, "Test not found.")
             return redirect('publish_results_testid')
         
-        # Get student results for this test
-        # This would typically come from the Student model where answers and calculated marks are stored
-        student_results = Student.objects.filter(test_id=test_id)
-        
-        # Calculate total marks for each student
+        # Find all students who took this test
+        # We use StudentTestInfo because it tracks active/completed test sessions
+        student_sessions = StudentTestInfo.objects.filter(test_id=test_id)
+        test_type = teacher_record.test_type
+
         results_data = []
-        for result in student_results:
-            # Get the questions for this test to calculate total possible marks
-            questions = Question.objects.filter(test_id=test_id)
-            total_possible = sum([q.marks for q in questions])
-            
-            # Calculate actual score based on correct answers
-            correct_count = 0
+        for session in student_sessions:
+            student_email = session.email
+            total_possible = 0
             total_score = 0
-            for q in questions:
-                student_answer = Student.objects.filter(
-                    test_id=test_id,
-                    email=result.email,
-                    qid=q.qid,
-                    ans=q.ans  # If student's answer matches correct answer
-                ).count()
-                if student_answer > 0:
-                    total_score += q.marks
             
-            results_data.append({
-                'email': result.email,
-                'marks': total_score,
-                'total_possible': total_possible
-            })
+            if test_type == 'subjective':
+                # Sum the actual marks awarded in LongTest
+                long_tests = LongTest.objects.filter(test_id=test_id, email=student_email)
+                for lt in long_tests:
+                    total_score += lt.marks if lt.marks else 0
+                
+                # Calculate total possible from LongQA
+                long_qas = LongQA.objects.filter(test_id=test_id)
+                total_possible = sum([q.marks if q.marks else 0 for q in long_qas])
+                
+            elif test_type == 'practical':
+                # Sum the actual marks awarded in PracticalTest
+                prac_tests = PracticalTest.objects.filter(test_id=test_id, email=student_email)
+                for pt in prac_tests:
+                    total_score += pt.marks if pt.marks else 0
+                
+                # Calculate total possible from PracticalQA
+                prac_qas = PracticalQA.objects.filter(test_id=test_id)
+                total_possible = sum([q.marks if q.marks else 0 for q in prac_qas])
+                
+            else:  # objective
+                # Get the questions for this test to calculate total possible marks
+                questions = Question.objects.filter(test_id=test_id)
+                total_possible = sum([q.marks for q in questions])
+                
+                # Calculate actual score based on correct answers
+                for q in questions:
+                    student_answer = Student.objects.filter(
+                        test_id=test_id,
+                        email=student_email,
+                        qid=q.qid,
+                        ans=q.ans  # If student's answer matches correct answer
+                    ).count()
+                    if student_answer > 0:
+                        total_score += q.marks
+            
+            # Avoid duplicate emails if there are multiple sessions by checking if already in results_data
+            if not any(r['email'] == student_email for r in results_data):
+                results_data.append({
+                    'email': student_email,
+                    'marks': total_score,
+                    'total_possible': total_possible
+                })
         
         context = {
             'callresults': results_data,
@@ -2296,3 +2430,131 @@ def check_environment_view(request):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+def add_objective_question_view(request, test_id):
+    """Add a new objective question to an existing test."""
+    if request.user.user_type != "teacher":
+        return redirect("student_index")
+    
+    # Check if test exists and belongs to this teacher
+    teacher_record = Teacher.objects.filter(test_id=test_id, uid=request.user).first()
+    if not teacher_record:
+        messages.error(request, "Test not found or you do not have permission.")
+        return redirect('updatetidlist')
+        
+    if request.method == 'POST':
+        qid = request.POST.get('qid', '').strip()
+        q = request.POST.get('ques', '').strip()
+        a = request.POST.get('ao', '').strip()
+        b = request.POST.get('bo', '').strip()
+        c = request.POST.get('co', '').strip()
+        d = request.POST.get('do', '').strip()
+        ans = request.POST.get('anso', '').strip()
+        marks = request.POST.get('mko', '1').strip()
+        
+        if not all([qid, q, a, b, c, d, ans, marks]):
+            messages.error(request, "Please fill in all required fields.")
+            return render(request, "addQuestion.html", {"test_id": test_id})
+            
+        # Check if question ID already exists in this test
+        if Question.objects.filter(test_id=test_id, qid=qid).exists():
+            messages.error(request, f"Question ID {qid} already exists in this test.")
+            return render(request, "addQuestion.html", {"test_id": test_id})
+            
+        Question.objects.create(
+            uid=request.user,
+            test_id=test_id,
+            qid=qid,
+            q=q,
+            a=a,
+            b=b,
+            c=c,
+            d=d,
+            ans=ans,
+            marks=int(marks)
+        )
+        
+        messages.success(request, f"Question {qid} added successfully!")
+        return redirect('updatetidlist')
+        
+    return render(request, "addQuestion.html", {"test_id": test_id})
+
+
+@login_required
+def add_long_question_view(request, test_id):
+    """Add a new subjective question to an existing test."""
+    if request.user.user_type != "teacher":
+        return redirect("student_index")
+    
+    teacher_record = Teacher.objects.filter(test_id=test_id, uid=request.user).first()
+    if not teacher_record:
+        messages.error(request, "Test not found or you do not have permission.")
+        return redirect('updatetidlist')
+        
+    if request.method == 'POST':
+        qid = request.POST.get('qid', '').strip()
+        q = request.POST.get('ques', '').strip()
+        marks = request.POST.get('mko', '5').strip()
+        
+        if not all([qid, q, marks]):
+            messages.error(request, "Please fill in all required fields.")
+            return render(request, "addQuestionLQA.html", {"test_id": test_id})
+            
+        if LongQA.objects.filter(test_id=test_id, qid=qid).exists():
+            messages.error(request, f"Question ID {qid} already exists in this test.")
+            return render(request, "addQuestionLQA.html", {"test_id": test_id})
+            
+        LongQA.objects.create(
+            uid=request.user,
+            test_id=test_id,
+            qid=qid,
+            q=q,
+            marks=int(marks)
+        )
+        
+        messages.success(request, f"Subjective question {qid} added successfully!")
+        return redirect('updatetidlist')
+        
+    return render(request, "addQuestionLQA.html", {"test_id": test_id})
+
+
+@login_required
+def add_practical_question_view(request, test_id):
+    """Add a new practical question to an existing test."""
+    if request.user.user_type != "teacher":
+        return redirect("student_index")
+    
+    teacher_record = Teacher.objects.filter(test_id=test_id, uid=request.user).first()
+    if not teacher_record:
+        messages.error(request, "Test not found or you do not have permission.")
+        return redirect('updatetidlist')
+        
+    if request.method == 'POST':
+        qid = request.POST.get('qid', '').strip()
+        q = request.POST.get('ques', '').strip()
+        compiler = request.POST.get('compiler', '1').strip()
+        marks = request.POST.get('mko', '10').strip()
+        
+        if not all([qid, q, compiler, marks]):
+            messages.error(request, "Please fill in all required fields.")
+            return render(request, "addQuestionPQA.html", {"test_id": test_id})
+            
+        if PracticalQA.objects.filter(test_id=test_id, qid=qid).exists():
+            messages.error(request, f"Question ID {qid} already exists in this test.")
+            return render(request, "addQuestionPQA.html", {"test_id": test_id})
+            
+        PracticalQA.objects.create(
+            uid=request.user,
+            test_id=test_id,
+            qid=qid,
+            q=q,
+            compiler=int(compiler),
+            marks=int(marks)
+        )
+        
+        messages.success(request, f"Practical question {qid} added successfully!")
+        return redirect('updatetidlist')
+        
+    return render(request, "addQuestionPQA.html", {"test_id": test_id})

@@ -31,9 +31,33 @@
             <span class="badge badge-secondary p-2"><i class="fas fa-id-card mr-1"></i> ID: {{tid}}</span>
           </div>
           <div class="form-group">
+            <!-- Question grid + progress -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="small text-muted">
+                Question {{ question_index|add:"1" }} of {{ total_questions }}
+              </div>
+              {% if total_questions and question_index|add:"1" == total_questions %}
+              <div class="badge badge-warning text-dark">
+                Last question – click "Finish Exam" after submitting.
+              </div>
+              {% endif %}
+            </div>
             <div class="container">
               <div id="overlay">
                 <div class="row" id="question-list">
+                  {% if question_list %}
+                  {% for qid in question_list %}
+                  {% with forloop.counter0 as idx %}
+                  <div class="col-sm-2 mb-2">
+                    <a href="?q={{ idx }}"
+                      class="btn {% if bookmarked_qids and qid in bookmarked_qids %}btn-warning text-dark{% elif idx == question_index %}btn-success{% else %}btn-primary{% endif %} question-btn"
+                      style="width:100%; height:40px;">
+                      {{ forloop.counter }}
+                    </a>
+                  </div>
+                  {% endwith %}
+                  {% endfor %}
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -76,18 +100,28 @@
               <!-- time remaining (seconds) sent with every form submit -->
               <input type="hidden" id="time_input" name="time" value="{{ time_left }}" />
               <div class="col-md-6 d-flex justify-content-between mb-3">
-                <button type="submit" name="action" value="prev" id="prevBtn" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i> Previous</button>
-                <button type="submit" name="action" value="next" id="nextBtn" class="btn btn-primary">Next <i class="fas fa-arrow-right ms-2"></i></button>
+                <button type="submit" name="action" value="prev" id="prevBtn" class="btn btn-outline-primary">
+                  <i class="fas fa-arrow-left me-2"></i> Previous
+                </button>
+                <button type="submit" name="action" value="next" id="nextBtn" class="btn btn-primary">
+                  Next <i class="fas fa-arrow-right ms-2"></i>
+                </button>
               </div>
               <div class="col-md-6 d-flex justify-content-end mb-3 gap-2">
-                <button type="submit" name="action" value="bookmark" class="btn btn-info text-white mr-2" id="bookmarkBtn"><i class="fas fa-bookmark me-2"></i> Bookmark</button>
-                <button type="submit" name="action" value="submit" id="submitBtn" class="btn btn-success"><i class="fas fa-check me-2"></i> Submit Answer</button>
+                <button type="button" class="btn btn-info text-white mr-2" id="bookmarkBtn"
+                  onclick="bookmarkQuestion()">
+                  <i class="fas fa-bookmark me-2"></i> Bookmark
+                </button>
+                <button type="submit" name="action" value="submit" id="submitBtn" class="btn btn-success">
+                  <i class="fas fa-check me-2"></i> Submit Answer
+                </button>
               </div>
             </form>
           </div>
 
           <div class="mt-5 border-top pt-4">
-            <button class="btn btn-danger btn-block btn-lg shadow-soft" id="finishBtn" type="submit" form="examForm" name="action" value="finish">
+            <button class="btn btn-danger btn-block btn-lg shadow-soft" id="finishBtn" type="submit" form="examForm"
+              name="action" value="finish">
               <i class="fas fa-flag-checkered me-2"></i> Finish Exam
             </button>
           </div>
@@ -102,8 +136,9 @@
             style="position: fixed; top: 15px; right: 15px; z-index: 9999; background: rgba(15, 23, 42, 0.95); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3); text-align: center; width: 250px; backdrop-filter: blur(8px);">
 
             <!-- Timer Section -->
-              <div class="mb-3">
-              <div id="time" class="h3 mb-0 font-weight-bold text-white" style="letter-spacing: 1px;">{{ time_left }}</div>
+            <div class="mb-3">
+              <div id="time" class="h3 mb-0 font-weight-bold text-white" style="letter-spacing: 1px;">{{ time_left }}
+              </div>
               <div class="text-uppercase font-weight-bold text-info" style="font-size: 9px; letter-spacing: 1.5px;">Time
                 Remaining</div>
             </div>
@@ -179,17 +214,24 @@
   .form-check {
     margin-bottom: 10px;
   }
+
   /* Ensure overlay doesn't block main controls and buttons stay clickable */
   #overlay {
-    pointer-events: none; /* let clicks fall through by default */
+    pointer-events: none;
+    /* let clicks fall through by default */
   }
 
   #overlay .question-btn {
-    pointer-events: auto; /* allow clicking on question buttons inside overlay */
+    pointer-events: auto;
+    /* allow clicking on question buttons inside overlay */
   }
 
   /* Ensure navigation and control buttons are above overlays */
-  #prevBtn, #nextBtn, #submitBtn, #finishBtn, #bookmarkBtn {
+  #prevBtn,
+  #nextBtn,
+  #submitBtn,
+  #finishBtn,
+  #bookmarkBtn {
     position: relative;
     z-index: 20000;
   }
@@ -203,12 +245,12 @@
 
 <script>
   // Initialize exam and camera monitoring
-  document.addEventListener('DOMContentLoaded', async function() {
+  document.addEventListener('DOMContentLoaded', async function () {
     // Get configuration from template
     var testId = "{{ tid }}";
     var proctorType = "{{ proctortype }}";
     var calcEnabled = "{{ calc }}";
-    
+
     console.log('📋 Exam Configuration:', {
       testId: testId,
       proctorType: proctorType,
@@ -226,7 +268,7 @@
     if (proctorType === "0") {
       console.log('🎥 Initializing Internal Camera Monitoring...');
       document.getElementById('videocheck').style.display = "block";
-      
+
       // Initialize the new monitoring system
       try {
         await window.NocheatZone.initializeMonitoring(testId, proctorType);
@@ -242,7 +284,7 @@
   });
 
   // Cleanup on page unload
-  window.addEventListener('beforeunload', function() {
+  window.addEventListener('beforeunload', function () {
     if (window.NocheatZone && window.NocheatZone.stopMonitoring) {
       window.NocheatZone.stopMonitoring();
     }

@@ -9,6 +9,7 @@
                       <h3 class="h3 text-center">SHARE DETAILS WITH STUDENTS</h3>  
                     </div>
                     <form action="/share_details_emails" method="POST" class="mt-4" enctype = "multipart/form-data">
+                    {% csrf_token %}
                     <div class="card-body justify-content-md-center">
                         <div class="table-responsive">
                             <table class="table table-centered table-nowrap mb-0 rounded">

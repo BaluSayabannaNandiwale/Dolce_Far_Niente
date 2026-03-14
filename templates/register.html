@@ -93,9 +93,9 @@
                             class="fas fa-users text-primary"></i></span>
                       </div>
                       <select class="custom-select border-left-0 pl-0" id="user_type" name="user_type" required>
-                        <option value="student" {% if form.user_type.value=='student' %}selected{% endif %}>Student
+                        <option value="student" {% if form.user_type.value == 'student' %}selected{% endif %}>Student
                         </option>
-                        <option value="teacher" {% if form.user_type.value=='teacher' %}selected{% endif %}>Professor
+                        <option value="teacher" {% if form.user_type.value == 'teacher' %}selected{% endif %}>Professor
                         </option>
                       </select>
                     </div>
