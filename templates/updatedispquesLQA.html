@@ -8,6 +8,9 @@
                 <div class="row mb-4">
                     <div class="col-lg-12 col-sm-16">
                         <h3 class="h3 text-center">UPDATE QUESTIONS</h3>  
+                        <div class="text-center mb-3">
+                            <a href="/add_questionLQA/{{tid}}" class="btn btn-success">ADD NEW QUESTION</a>
+                        </div>
                     </div>
 {% for res in callresults%}    
 <div class="table-responsive">
@@ -37,6 +40,9 @@
     <h3 class="h3 text-center">
         No Records Found!
     </h3>  
+    <div class="text-center mt-3">
+        <a href="/add_questionLQA/{{tid}}" class="btn btn-success">ADD NEW QUESTION</a>
+    </div>
   </div>
 {% endif %}
 {% endblock %}

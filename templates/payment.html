@@ -1,63 +1,117 @@
 {% extends 'professor_dashboard.html' %}
 {% block body %}
-    <div class="row align-items-center d-flex  justify-content-center">
-      <div class="col-12 mb-4">
-          <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
-              <div class="card-body align-items-center d-flex justify-content-center">     
-                  <div class="row mb-4">
-    <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-            <center><img src="static/stripe_payments.png" alt="pay_stripe" width="50%"></center><br>
-            <h3 class="text-primary mb-4 justify-content-center">
-              <center> Your Current Exam Points left are: {{callresults.examcredits}}</center>
-              </h3>
-              <div class="card-header bg-white p-3 justify-content-center">
-                  <center>
-                  <span class="d-block">
-                      <span class="display-1 text-dark font-weight-bold">
-                          <span class="align-top font-medium">₹</span>499
-                  </span>
-                  <span class="text-primary mb-4">10 exams</span>
-                  </span>
-                </center>
-              </div>
-              <div class="card-body justify-content-center">
-                <center>
-                  <ul class="list-unstyled mb-4 justify-content-center">
-                      <li class="list-item pb-3 justify-content-center"><strong>Exam Analytics</strong></li>
-                      <li class="list-item pb-3 justify-content-center"><strong>Monitor Students</strong></li>
-                      <li class="list-item pb-3 justify-content-center"><strong>Unlimited Student Capacity</strong></li>
-                      <li class="list-item pb-3 justify-content-center"><strong>24 * 7 Community support </strong></li>
-                  </ul>
-                </center>
-                  <button type="button"id="checkout-button" class="btn btn-primary btn-block animate-up-1">Pay Now!</button>
-              </div>
-          </div>
-      </div>
-  </div>
-      </div>
+
+<div class="row justify-content-center" style="margin-top: 10px;">
+    <div class="col-12 col-md-8 col-lg-5">
+        <!-- Main Payment Card -->
+        <div class="card border-0 shadow-lg mb-4 overflow-hidden" style="border-radius: 20px;">
+            <!-- Header with Gradient and Credit Display -->
+            <div class="card-header bg-primary text-white p-5 text-center position-relative" style="background: linear-gradient(135deg, #4f46e5 0%, #31316a 100%);">
+                <div class="mb-3">
+                    <img src="static/stripe_payments.png" alt="Stripe" style="height: 30px; filter: brightness(0) invert(1);">
+                </div>
+                <h4 class="font-weight-light opacity-80 mb-2">Current Balance</h4>
+                <div class="display-4 font-weight-bold mb-0">{{callresults.examcredits}}</div>
+                <p class="small text-uppercase tracking-wider">Exam Credits Remaining</p>
+                
+                <!-- Decoration -->
+                <div class="position-absolute" style="bottom: -20px; right: -20px; opacity: 0.1;">
+                    <i class="fas fa-wallet fa-10x"></i>
+                </div>
+            </div>
+            
+            <div class="card-body p-4 p-lg-5 text-center">
+                <div class="plan-header mb-5">
+                    <h5 class="text-uppercase text-primary font-weight-bold letter-spacing-1 mb-4">Professional Bundle</h5>
+                    <div class="price">
+                        <span class="h1 font-weight-bold text-dark">₹499</span>
+                        <span class="h5 text-muted font-weight-light">/ 10 exams</span>
+                    </div>
+                </div>
+
+                <ul class="list-unstyled mb-5 mx-auto" style="max-width: 250px;">
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success mr-3"></i>
+                        <span class="text-dark font-weight-medium">Advanced Analytics</span>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success mr-3"></i>
+                        <span class="text-dark font-weight-medium">Live AI Proctoring</span>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success mr-3"></i>
+                        <span class="text-dark font-weight-medium">Unlimited Students</span>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="fas fa-check-circle text-success mr-3"></i>
+                        <span class="text-dark font-weight-medium">Priority Support</span>
+                    </li>
+                </ul>
+
+                <button type="button" id="checkout-button" class="btn btn-primary btn-block py-3 font-weight-bold shadow-soft animate-up-1" 
+                        style="border-radius: 12px; font-size: 1.1rem; background: #31316a; border: none;">
+                    <i class="fas fa-shopping-cart mr-2"></i> PURCHASE CREDITS NOW
+                </button>
+            </div>
+            
+            <div class="card-footer bg-light border-0 text-center py-3">
+                <div class="d-flex align-items-center justify-content-center text-muted small">
+                    <i class="fas fa-shield-alt mr-2 text-primary"></i>
+                    Secure transaction powered by Stripe
+                </div>
+            </div>
+        </div>
     </div>
-    <script type="text/javascript">
+</div>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
     var stripe = Stripe("pk_test_51ISHOsAGsy3DJu1jc1IfuLYDkED8d1QPRl5e8RTU7mdcZpELeGEysYFH4NfjLoPiIkRpghWUHmUH7QpOk1sgzM8X00prZwtaX9");
     var checkoutButton = document.getElementById("checkout-button");
     checkoutButton.addEventListener("click", function () {
-      fetch("/create-checkout-session", {
-        method: "POST",
-      })
+        // Show loading state
+        checkoutButton.innerHTML = '<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span> Processing...';
+        checkoutButton.disabled = true;
+
+        fetch("/create-checkout-session", {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
         .then(function (response) {
-          return response.json();
+            return response.json();
         })
         .then(function (session) {
-          return stripe.redirectToCheckout({ sessionId: session.id });
+            return stripe.redirectToCheckout({ sessionId: session.id });
         })
         .then(function (result) {
-          if (result.error) {
-            alert(result.error.message);
-          }
+            if (result.error) {
+                alert(result.error.message);
+                checkoutButton.disabled = false;
+                checkoutButton.innerHTML = '<i class="fas fa-shopping-cart mr-2"></i> PURCHASE CREDITS NOW';
+            }
         })
         .catch(function (error) {
-          console.error("Error:", error);
+            console.error("Error:", error);
+            checkoutButton.disabled = false;
+            checkoutButton.innerHTML = '<i class="fas fa-shopping-cart mr-2"></i> PURCHASE CREDITS NOW';
         });
     });
-  </script>
+</script>
+
+<style>
+    .opacity-80 { opacity: 0.8; }
+    .letter-spacing-1 { letter-spacing: 1px; }
+    .tracking-wider { letter-spacing: 2px; }
+    .animate-up-1 {
+        transition: all 0.3s ease;
+    }
+    .animate-up-1:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(49, 49, 106, 0.25) !important;
+    }
+</style>
+
 {% endblock %}

@@ -1,38 +1,104 @@
 {% extends 'professor_dashboard.html' %}
 {% block body %}
-<div class="row align-items-center d-flex  justify-content-center">
-    <div class="col-12 mb-4">
-        <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
-            <div class="card-body align-items-center d-flex justify-content-center">     
-                <div class="row mb-4">
-                    {% if cresults %}
-                    <div class="col-lg-12 col-sm-16">
-                      <h3 class="h3 text-center">VIEW QUESTIONS</h3>  
-                    </div>
-                    <form action="{% url 'display_questions' %}" method="POST" class="mt-4">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label class="my-1 mr-2" for="livebox">Choose Exam ID:</label>
-                            <div class="input-group mb-4">
-                                <select class="custom-select my-1 mr-sm-2"  name="choosetid" required>
+
+<div class="row justify-content-center" style="margin-top: 10px;">
+    <div class="col-12 col-md-10 col-lg-7">
+        <div class="card border-0 shadow-lg mb-4">
+            <div class="card-header bg-primary text-white p-4 text-center rounded-top">
+                <h2 class="h3 mb-1"><i class="fas fa-eye mr-2"></i> Review Question Bank</h2>
+                <p class="mb-0 opacity-80">Select an exam to manage and review its question set</p>
+            </div>
+
+            <div class="card-body p-4 p-lg-5">
+                {% if cresults %}
+                <div class="text-center mb-4">
+                    <i class="fas fa-database fa-4x text-primary" style="opacity: 0.2;"></i>
+                </div>updatetidlist
+
+                <form action="{% url 'display_questions' %}" method="POST" id="viewQuestionsForm">
+                    {% csrf_token %}
+
+                    <div class="form-group mb-4">
+                        <label class="h6 font-weight-bold mb-3" for="choosetid">
+                            <i class="fas fa-clipboard-list text-primary mr-2"></i> Available Examinations
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-white border-right-0"
+                                    style="border-radius: 12px 0 0 12px;">
+                                    <i class="fas fa-id-badge"></i>
+                                </span>
+                            </div>
+                            <select class="custom-select border-left-0" id="choosetid" name="choosetid" required
+                                style="border-radius: 0 12px 12px 0; height: 50px;">
+                                <option value="" disabled selected>-- Select an Exam ID --</option>
                                 {% for test in cresults %}
                                 <option value="{{ test.test_id }}">{{ test.test_id }}</option>
                                 {% endfor %}
-                                </select>
-                                </div>
-                            <input type="submit" class="btn btn-block btn-primary" value="VIEW QUESTIONS"/>
-                            </div>
-                            {% else %}        
-                            <div class="col-lg-12 col-sm-16">
-                                <center><lottie-player src="https://assets7.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player></center>
-                                <h3 class="h3 text-center">
-                                    No Records Found!
-                                </h3>                              
-                              </div>
-                            {% endif %}
-                            </div>
+                            </select>
+                        </div>
+                        <small class="text-muted mt-2 d-block">Only exams with generated questions will appear
+                            here.</small>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-block btn-primary shadow-soft py-3 font-weight-bold"
+                            style="border-radius: 12px; font-size: 1.1rem;">
+                            <i class="fas fa-search-plus mr-2"></i> ACCESS QUESTION BANK
+                        </button>
+                    </div>
+                </form>
+
+                {% else %}
+                <div class="text-center py-5">
+                    <lottie-player src="https://assets7.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"
+                        background="transparent" speed="1" style="width: 250px; height: 250px; margin: 0 auto;" loop
+                        autoplay></lottie-player>
+                    <h3 class="h4 mt-4 font-weight-bold text-dark">No Questions Found</h3>
+                    <p class="text-muted px-4">You haven't generated any questions yet. Start by creating a test or
+                        generating questions from content.</p>
+                    <div class="mt-4">
+                        <a href="{% url 'generate_test' %}" class="btn btn-primary px-4" style="border-radius: 10px;">
+                            <i class="fas fa-magic mr-2"></i> Generate Now
+                        </a>
+                    </div>
                 </div>
-                            </div>
+                {% endif %}
+            </div>
+
+            <div class="card-footer bg-light border-0 text-center py-3">
+                <p class="small text-muted mb-0"><i class="fas fa-info-circle mr-1"></i> You can edit or delete
+                    questions after selecting an exam.</p>
+            </div>
         </div>
-    </div>    
+    </div>
+</div>
+
+<style>
+    .opacity-80 {
+        opacity: 0.8;
+    }
+
+    .shadow-soft {
+        box-shadow: 0 8px 16px rgba(49, 49, 106, 0.15) !important;
+    }
+
+    .custom-select:focus {
+        border-color: #31316a;
+        box-shadow: 0 0 0 0.2rem rgba(49, 49, 106, 0.1);
+    }
+
+    .btn-primary {
+        background-color: #31316a;
+        border-color: #31316a;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(49, 49, 106, 0.2) !important;
+        background-color: #252554;
+    }
+</style>
+
 {% endblock %}

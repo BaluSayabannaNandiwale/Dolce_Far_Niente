@@ -58,6 +58,29 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
 
+    .navbar-main .nav-link {
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .navbar-main .nav-link.active {
+        color: #65A30D !important; /* Olive Green to match index theme */
+        font-weight: 700;
+        position: relative;
+    }
+
+    .navbar-main .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 2px;
+        background: #65A30D;
+        border-radius: 2px;
+    }
+
     .btn-primary {
       border-radius: 8px;
       font-weight: 600;

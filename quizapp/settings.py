@@ -141,3 +141,6 @@ LOGOUT_REDIRECT_URL = '/'
 GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')  # Set GROQ_API_KEY in .env or environment
 # Groq API endpoint (adjust if Groq uses a different path/version)
 GROQ_API_URL = os.getenv('GROQ_API_URL', 'https://api.groq.ai/v1/generate')
+
+# Face verification settings
+FACE_VERIFICATION_ENABLED = os.getenv('FACE_VERIFICATION_ENABLED', 'True') == 'True' 

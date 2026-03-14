@@ -1,65 +1,193 @@
 {% extends 'professor_dashboard.html' %}
 {% block body %}
-<div class="row align-items-center d-flex  justify-content-center">
+
+<style>
+    /* Card Styling */
+    .card {
+        border-radius: 14px;
+        background: #ffffff;
+        transition: all 0.4s ease;
+    }
+
+    /* Card Hover Animation */
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(0, 123, 255, 0.15);
+    }
+
+    /* Heading */
+    h3 {
+        color: #1a73e8;
+        font-weight: 700;
+        animation: fadeSlide 1s ease;
+    }
+
+    /* Table Styling */
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    /* Table Header */
+    .thead-light {
+        background: #e8f2ff;
+    }
+
+    /* Table Row Hover */
+    .table tbody tr:hover {
+        background: #f4f9ff;
+        transition: 0.3s;
+    }
+
+    /* Button Styling */
+    .btn-primary {
+        background: #1a73e8;
+        border: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    /* Button Hover */
+    .btn-primary:hover {
+        background: #0d5bd7;
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 123, 255, 0.35);
+    }
+
+    /* Page Animation */
+    .row {
+        animation: fadeInPage 0.8s ease;
+    }
+
+    @keyframes fadeInPage {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeSlide {
+        from {
+            opacity: 0;
+            transform: translateY(-15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+
+<div class="row align-items-center d-flex justify-content-center">
     <div class="col-12 mb-4">
-        <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
-            <div class="card-body align-items-center d-flex justify-content-center">     
+
+        <div class="card border-light shadow-sm components-section align-items-center d-flex justify-content-center">
+
+            <div class="card-body align-items-center d-flex justify-content-center">
+
                 <div class="row mb-4">
+
                     {% if tests %}
+
                     <div class="col-lg-12 col-sm-16">
-        <h3 class="h3 text-center">EXAM HISTORY</h3> 
-                    </div> 
-<div class="card-body justify-content-md-center">
-    <center><lottie-player src="https://assets1.lottiefiles.com/packages/lf20_ljr4k6s1.json"  background="transparent"  speed="1"  style="width: 300px; height: 180px;"  loop  autoplay></lottie-player></center>
-        <div class="table-responsive">
-            <table id="example" class="table table-centered table-nowrap mb-0 rounded">
-                <thead class="thead-light">
-                    <tr>
-                                <th class="border-0" scope="col" >Test ID</th>
-                                <th class="border-0" scope="col" >Password</th>
-                                <th class="border-0" scope="col" >Subject</th>
-                                <th class="border-0" scope="col" >Topic</th>
-                                <th class="border-0" scope="col" >Share</th>
-                            </tr>
-							 <tbody>
-            {% for test in tests %}
-                            <tr>
-								<td>{{ test.test_id }}</td>
-                                <td>{{ test.password }}</td>
-								<td>{{ test.subject }}</td>
-								<td>{{ test.topic }}</td>
-                                <td><a class="btn btn-primary" href="{% url 'share_details' test.test_id %}">Share</a></td>
-                             </tr>
-            {% endfor %}
-                                  </tbody>
-                        </table>
+                        <h3 class="h3 text-center">EXAM HISTORY</h3>
                     </div>
+
+                    <div class="card-body justify-content-md-center">
+
+                        <center>
+                            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_ljr4k6s1.json"
+                                background="transparent" speed="1" style="width:300px;height:180px;" loop autoplay>
+                            </lottie-player>
+                        </center>
+
+                        <div class="table-responsive">
+
+                            <table id="example" class="table table-centered table-nowrap mb-0 rounded">
+
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="border-0">Test ID</th>
+                                        <th class="border-0">Password</th>
+                                        <th class="border-0">Subject</th>
+                                        <th class="border-0">Topic</th>
+                                        <th class="border-0">Share</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for test in tests %}
+                                    <tr>
+                                        <td>{{ test.test_id }}</td>
+                                        <td>{{ test.password }}</td>
+                                        <td>{{ test.subject }}</td>
+                                        <td>{{ test.topic }}</td>
+                                        <td>
+                                            <a class="btn btn-primary" href="{% url 'share_details' test.test_id %}">
+                                                Share
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
                 </div>
-</div>
-{% else %}
-<div class="col-lg-12 col-sm-16">
-    <center><lottie-player src="https://assets7.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player></center>
-    <h3 class="h3 text-center">
-        No Records Found!
-    </h3>  
-  </div>        
-                      {% endif %}
+
+                {% else %}
+
+                <div class="col-lg-12 col-sm-16">
+
+                    <center>
+                        <lottie-player src="https://assets7.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"
+                            background="transparent" speed="1" style="width:300px;height:300px;" loop autoplay>
+                        </lottie-player>
+                    </center>
+
+                    <h3 class="h3 text-center">
+                        No Records Found!
+                    </h3>
+
+                </div>
+
+                {% endif %}
+
             </div>
+
         </div>
+
     </div>
 </div>
+
+
 <script>
-    $(document).ready(function() {
-    // Clean URL if it ends with # (e.g. from old placeholder links)
-    if (window.location.hash === '#' || window.location.href.endsWith('/#')) {
-        history.replaceState(null, '', '{% url "disptests" %}');
-    }
-    $('#example').DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
-    } );
-} );
+    $(document).ready(function () {
+
+        // Clean URL if it ends with #
+        if (window.location.hash === '#' || window.location.href.endsWith('/#')) {
+            history.replaceState(null, '', '{% url "disptests" %}');
+        }
+
+        $('#example').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+
+    });
 </script>
+
 {% endblock %}

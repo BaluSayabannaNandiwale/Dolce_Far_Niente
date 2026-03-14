@@ -1,37 +1,99 @@
 {% extends 'student_dashboard.html' %}
 {% load static %}
 {% block body %}
-<div class="row align-items-center d-flex  justify-content-center">
-    <div class="col-12 mb-4">
-        <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
-            <div class="card-body align-items-center d-flex justify-content-center">     
-                <div class="row mb-4">
-                    <div class="col-lg-12 col-sm-16">
-							<h3 class="h3 text-center">REPORT PROBLEMS</h3>  
+
+<div class="row justify-content-center w-100" style="margin-top: 20px;">
+    <div class="col-12 col-md-11 col-lg-9">
+        <div class="card border-0 shadow-lg mb-4">
+            <div class="card-header bg-dark text-white p-4 text-center rounded-top" style="background: linear-gradient(45deg, #4f46e5 0%, #3b82f6 100%);">
+                <h2 class="h3 mb-1 text-white"><i class="fas fa-headset mr-2"></i> Student Support Center</h2>
+                <p class="mb-0 text-white opacity-80">Encountered an issue? Our technical team is here to help.</p>
+            </div>
+            
+            <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center">
+                    <!-- Left Side: Visual Guide -->
+                    <div class="col-lg-5 d-none d-lg-block text-center border-right pr-4">
+                        <div class="mb-4">
+                            <img src="{% static 'report_bug.png' %}" class="img-fluid animate-bounce-slow" style="max-height: 180px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));" alt="Support">
+                        </div>
+                        <div class="mt-4 text-left">
+                            <h5 class="font-weight-bold text-dark mb-3"><i class="fas fa-info-circle text-primary mr-2"></i> Quick Tips:</h5>
+                            <ul class="list-unstyled small text-muted">
+                                <li class="mb-2 d-flex"><i class="fas fa-check text-success mr-2 mt-1"></i> Be specific about when the issue occurred.</li>
+                                <li class="mb-2 d-flex"><i class="fas fa-check text-success mr-2 mt-1"></i> Mention the browser you were using.</li>
+                                <li class="mb-2 d-flex"><i class="fas fa-check text-success mr-2 mt-1"></i> Check our FAQ page for instant answers.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Report Form -->
+                    <div class="col-lg-7 pl-lg-5">
+                        <form action="{% url 'report_student_email' %}" method="POST" id="studentReportForm">
+                            {% csrf_token %}
+                            
+                            <div class="form-group mb-4">
+                                <label class="h6 font-weight-bold mb-3 d-flex align-items-center" for="prob_type">
+                                    <i class="fas fa-list-alt text-primary mr-2"></i> Problem Category
+                                </label>
+                                <select class="custom-select custom-select-lg shadow-sm" id="prob_type" name="prob_type" required 
+                                    style="border-radius: 12px; height: 52px; font-size: 0.95rem; border: 1.5px solid #e2e8f0;">
+                                    <option value="" disabled selected>Select what describes your issue...</option>
+                                    <option value="Login/Register/Face Verification">Account & Identity (Login/Face Verify)</option>
+                                    <option value="Give Exam/Exam History">Assessment (Exam Interface/History)</option>
+                                    <option value="Student Monitoring">Viewing Results & Performance</option>
+                                    <option value="Others">General Suggestion / Other</option>
+                                </select>
                             </div>
-                            <img src="{% static 'report_bug.png' %}">
-                            <div class="card-body">
-							    <form action="{% url 'report_student_email' %}" method="POST" class="mt-4">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Choose Problem Category</label>
-                                        <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="prob_type" required>
-                                            <option value="Login/Register/Face Verification">Login/Register/Face Verification/Logout</option>
-                                            <option value="Give Exam/Exam History">Give Exam/Exam History</option>
-                                            <option value="Student Monitoring">Results</option>
-                                            <option value="Others">Others</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="h6" for="exampleFormControlTextarea1">Your message</label>
-                                        <textarea name="rquery" class="form-control" placeholder="How can we help? Any Problem/Suggestion" rows="4" required></textarea>
-                                    </div>
-  <input type="submit" class="btn btn-primary" value="REPORT!">
-    </form>
-  </div>
+
+                            <div class="form-group mb-4">
+                                <label class="h6 font-weight-bold mb-3 d-flex align-items-center" for="rquery">
+                                    <i class="fas fa-pen-fancy text-primary mr-2"></i> Detailed Message
+                                </label>
+                                <textarea name="rquery" id="rquery" class="form-control shadow-sm p-3" 
+                                    placeholder="Explain the problem or share your feedback here..." 
+                                    rows="5" required style="border-radius: 12px; font-size: 0.95rem; resize: none; border: 1.5px solid #e2e8f0;"></textarea>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary btn-block btn-lg shadow-soft py-3 font-weight-bold" 
+                                    style="border-radius: 12px; background: #31316a; border: none; letter-spacing: 0.5px; transition: all 0.3s ease;">
+                                    <i class="fas fa-paper-plane mr-2"></i> SEND REPORT
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+            
+            <div class="card-footer bg-light border-0 py-3 text-center">
+                <p class="small text-muted mb-0"><i class="fas fa-shield-alt mr-1"></i> Your feedback helps us build a more secure testing environment.</p>
+            </div>
         </div>
-       </div>
+    </div>
+</div>
+
+<style>
+    .opacity-80 { opacity: 0.8; }
+    .animate-bounce-slow {
+        animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-12px); }
+    }
+    .shadow-soft {
+        box-shadow: 0 4px 20px rgba(49, 49, 106, 0.2) !important;
+    }
+    .form-control:focus, .custom-select:focus {
+        border-color: #4f46e5 !important;
+        background-color: #fff !important;
+        box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.1) !important;
+    }
+    .btn-primary:hover {
+        background: #1c2540 !important;
+        transform: translateY(-2px);
+    }
+</style>
+
 {% endblock %}

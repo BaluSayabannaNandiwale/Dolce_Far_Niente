@@ -18,6 +18,7 @@ from exams.views import (
     deltidlist_view,
     disptests_view,
     share_details_view,
+    share_details_emails_view,
     livemonitoringtid_view,
     viewstudentslogs_view,
     insertmarkstid_view,
@@ -54,10 +55,13 @@ from exams.views import (
     view_results_view,
     view_results_for_test_view,
     publish_results_view,
+    add_objective_question_view,
+    add_long_question_view,
+    add_practical_question_view,
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),  # Admin disabled
     path('', include('accounts.urls')),
     path('give-test/', give_test_view, name='give_test'),
     path('give-test/<str:test_id>/', give_test_exam_view, name='give_test_exam'),
@@ -74,6 +78,7 @@ urlpatterns = [
     path('deltidlist/deldispques', delete_disp_questions_view, name='delete_disp_questions'),
     path('disptests/', disptests_view, name='disptests'),
     path('share-details/<str:test_id>/', share_details_view, name='share_details'),
+    path('share_details_emails', share_details_emails_view, name='share_details_emails'),
     path('livemonitoringtid/', livemonitoringtid_view, name='livemonitoringtid'),
     path('live_monitoring', live_monitoring_view, name='live_monitoring'),
     path('viewstudentslogs/', viewstudentslogs_view, name='viewstudentslogs'),
@@ -110,6 +115,9 @@ urlpatterns = [
     path('update/<str:test_id>/<str:qid>/', update_objective_question_view, name='update_objective_question'),
     path('updateLQA/<str:test_id>/<str:qid>/', update_long_question_view, name='update_long_question'),
     path('updatePQA/<str:test_id>/<str:qid>/', update_practical_question_view, name='update_practical_question'),
+    path('add_question/<str:test_id>/', add_objective_question_view, name='add_objective_question'),
+    path('add_questionLQA/<str:test_id>/', add_long_question_view, name='add_long_question'),
+    path('add_questionPQA/<str:test_id>/', add_practical_question_view, name='add_practical_question'),
     path('delete_questions/<str:test_id>/', delete_questions_view, name='delete_questions'),
     path('exams/', include('exams.urls')),
     path('proctoring/', include('proctoring.urls')),

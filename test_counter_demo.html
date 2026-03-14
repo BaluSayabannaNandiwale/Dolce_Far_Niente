@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter System Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .counter-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+        .counter-item {
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .counter-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .counter-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .counter-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .text-success { color: #28a745; }
+        .text-danger { color: #dc3545; }
+        .text-warning { color: #ffc107; }
+        .text-primary { color: #007bff; }
+        
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .btn-answer { background: #28a745; color: white; }
+        .btn-bookmark { background: #ffc107; color: #212529; }
+        .btn-reset { background: #dc3545; color: white; }
+        .btn-change { background: #17a2b8; color: white; }
+        .btn-deselect { background: #6c757d; color: white; }
+        .btn-nav { background: #007bff; color: white; }
+        
+        .log-panel {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px;
+            border-left: 3px solid #00ff00;
+            padding-left: 10px;
+        }
+        .status-bar {
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Exam Counter System - Live Demo</h1>
+    
+    <div class="status-bar">
+        <strong>Status:</strong> 
+        <span id="status-text">Ready to test</span>
+        <span style="float: right;">Total Questions: <strong id="total-questions">10</strong></span>
+    </div>
+
+    <!-- Counter Display -->
+    <div class="counter-panel">
+        <h3><i class="fas fa-chart-bar"></i> Real-Time Counters</h3>
+        <div class="counter-grid">
+            <div class="counter-item">
+                <div class="counter-icon text-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="counter-label">Answered</div>
+                <div class="counter-value text-success" id="answered-count">0</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-icon text-danger">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="counter-label">Not Answered</div>
+                <div class="counter-value text-danger" id="not-answered-count">10</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-icon text-warning">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <div class="counter-label">Bookmarked</div>
+                <div class="counter-value text-warning" id="bookmarked-count">0</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-icon text-primary">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="counter-label">Time Left</div>
+                <div class="counter-value text-primary" id="timer">00:50:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Controls -->
+    <div class="counter-panel">
+        <h3><i class="fas fa-flask"></i> Test Controls</h3>
+        <div class="test-buttons">
+            <button class="btn-answer" onclick="answerQuestion()">
+                <i class="fas fa-check"></i> Answer Question
+            </button>
+            <button class="btn-bookmark" onclick="bookmarkQuestion()">
+                <i class="fas fa-bookmark"></i> Bookmark Question
+            </button>
+            <button class="btn-change" onclick="changeAnswer()">
+                <i class="fas fa-edit"></i> Change Answer
+            </button>
+            <button class="btn-deselect" onclick="deselectAnswer()">
+                <i class="fas fa-times"></i> Deselect Answer
+            </button>
+            <button class="btn-nav" onclick="nextQuestion()">
+                <i class="fas fa-arrow-right"></i> Next Question
+            </button>
+            <button class="btn-reset" onclick="resetAll()">
+                <i class="fas fa-redo"></i> Reset All
+            </button>
+        </div>
+    </div>
+
+    <!-- Question Status Grid -->
+    <div class="counter-panel">
+        <h3><i class="fas fa-th"></i> Question Status (Click to Toggle)</h3>
+        <div id="question-grid" class="counter-grid" style="grid-template-columns: repeat(10, 1fr);">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Console Log -->
+    <div class="counter-panel">
+        <h3><i class="fas fa-terminal"></i> Console Log</h3>
+        <div id="log-panel" class="log-panel">
+            <div class="log-entry">System initialized. Ready to test...</div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated data structures (mimicking the real exam system)
+        const TOTAL_QUESTIONS = 10;
+        var nos = []; // Question IDs
+        var data = {}; // Question states
+        var currentQuestion = 1;
+
+        // Status constants
+        const NOT_MARKED = 0;
+        const MARKED = 1;
+        const BOOKMARKED = 2;
+        const MARKED_BOOKMARKED = 3;
+        const SUBMITTED = 4;
+        const SUBMITTED_BOOKMARKED = 5;
+
+        // Initialize
+        function init() {
+            nos = Array.from({length: TOTAL_QUESTIONS}, (_, i) => i + 1);
+            for (var i = 1; i <= TOTAL_QUESTIONS; i++) {
+                data[i] = { marked: null, status: NOT_MARKED };
+            }
+            renderQuestionGrid();
+            updateQuestionCounter();
+            log('✅ Demo initialized with ' + TOTAL_QUESTIONS + ' questions');
+        }
+
+        // Update counters (EXACT copy from app.js)
+        var updateQuestionCounter = function () {
+            if (!nos) return;
+
+            let answeredCount = 0;
+            let notAnsweredCount = 0;
+            let bookmarkedCount = 0;
+
+            for (var i = 1; i <= nos.length; i++) {
+                if (!data[i]) {
+                    notAnsweredCount++;
+                    continue;
+                }
+
+                var status = data[i].status;
+                var marked = data[i].marked;
+                
+                // Answered: Has submitted status OR has an answer selected
+                if (status === SUBMITTED || status === SUBMITTED_BOOKMARKED || 
+                    (marked !== null && marked !== undefined)) {
+                    answeredCount++;
+                } else {
+                    notAnsweredCount++;
+                }
+
+                // Bookmarked: Has bookmarked status
+                if (status === BOOKMARKED || status === SUBMITTED_BOOKMARKED || 
+                    status === MARKED_BOOKMARKED) {
+                    bookmarkedCount++;
+                }
+            }
+
+            // Update the UI elements with animation
+            var answeredElement = document.getElementById('answered-count');
+            var notAnsweredElement = document.getElementById('not-answered-count');
+            var bookmarkedElement = document.getElementById('bookmarked-count');
+
+            if (answeredElement) {
+                animateCounter(answeredElement, answeredCount);
+            }
+            if (notAnsweredElement) {
+                animateCounter(notAnsweredElement, notAnsweredCount);
+            }
+            if (bookmarkedElement) {
+                animateCounter(bookmarkedElement, bookmarkedCount);
+            }
+
+            // Update totals
+            document.getElementById('total-questions').textContent = nos.length;
+            
+            log(`📊 Counters updated: Answered=${answeredCount}, Not Answered=${notAnsweredCount}, Bookmarked=${bookmarkedCount}`);
+        }
+
+        // Animate counter (EXACT copy from app.js)
+        function animateCounter(element, newValue) {
+            const currentValue = parseInt(element.textContent) || 0;
+            if (currentValue !== newValue) {
+                element.style.transition = 'all 0.3s ease';
+                element.style.transform = 'scale(1.2)';
+                element.style.fontWeight = 'bold';
+                
+                setTimeout(() => {
+                    element.textContent = newValue;
+                    element.style.transform = 'scale(1)';
+                }, 150);
+            }
+        }
+
+        // Render question grid
+        function renderQuestionGrid() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+            
+            for (var i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = 'btn-question-status';
+                btn.style.width = '100%';
+                btn.style.padding = '10px';
+                btn.style.borderRadius = '5px';
+                btn.style.border = 'none';
+                btn.style.cursor = 'pointer';
+                btn.style.fontWeight = 'bold';
+                btn.style.color = 'white';
+                
+                // Set color based on status
+                const status = data[i].status;
+                if (status === NOT_MARKED) btn.style.background = '#dc3545';
+                else if (status === MARKED) btn.style.background = '#17a2b8';
+                else if (status === BOOKMARKED) btn.style.background = '#ffc107';
+                else if (status === SUBMITTED) btn.style.background = '#28a745';
+                else if (status === MARKED_BOOKMARKED) btn.style.background = '#ffc107';
+                else if (status === SUBMITTED_BOOKMARKED) btn.style.background = '#ffc107';
+                
+                btn.onclick = () => toggleQuestionStatus(i);
+                grid.appendChild(btn);
+            }
+        }
+
+        // Toggle question status
+        function toggleQuestionStatus(qNum) {
+            currentQuestion = qNum;
+            const status = data[qNum].status;
+            
+            if (status === NOT_MARKED) {
+                data[qNum].status = SUBMITTED;
+                data[qNum].marked = 'A';
+                log(`✏️ Question ${qNum} answered`);
+            } else if (status === SUBMITTED) {
+                data[qNum].status = BOOKMARKED;
+                log(`🔖 Question ${qNum} bookmarked`);
+            } else if (status === BOOKMARKED) {
+                data[qNum].status = NOT_MARKED;
+                data[qNum].marked = null;
+                log(`❌ Question ${qNum} bookmark removed`);
+            }
+            
+            renderQuestionGrid();
+            updateQuestionCounter();
+        }
+
+        // Test functions
+        function answerQuestion() {
+            if (!data[currentQuestion]) data[currentQuestion] = {};
+            data[currentQuestion].marked = ['A','B','C','D'][Math.floor(Math.random()*4)];
+            data[currentQuestion].status = SUBMITTED;
+            renderQuestionGrid();
+            updateQuestionCounter();
+            log(`✅ Answered Question ${currentQuestion}`);
+        }
+
+        function bookmarkQuestion() {
+            if (!data[currentQuestion]) data[currentQuestion] = {};
+            const status = data[currentQuestion].status;
+            if (status === SUBMITTED) {
+                data[currentQuestion].status = SUBMITTED_BOOKMARKED;
+            } else if (status === NOT_MARKED) {
+                data[currentQuestion].status = BOOKMARKED;
+            }
+            renderQuestionGrid();
+            updateQuestionCounter();
+            log(`🔖 Bookmarked Question ${currentQuestion}`);
+        }
+
+        function changeAnswer() {
+            if (data[currentQuestion] && data[currentQuestion].status === SUBMITTED) {
+                data[currentQuestion].marked = ['A','B','C','D'][Math.floor(Math.random()*4)];
+                renderQuestionGrid();
+                updateQuestionCounter();
+                log(`🔄 Changed answer for Question ${currentQuestion} (count stays same!)`);
+            } else {
+                alert('First answer the question, then try changing it!');
+            }
+        }
+
+        function deselectAnswer() {
+            if (data[currentQuestion]) {
+                data[currentQuestion].marked = null;
+                data[currentQuestion].status = NOT_MARKED;
+                renderQuestionGrid();
+                updateQuestionCounter();
+                log(`❌ Deselected Question ${currentQuestion}`);
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion = (currentQuestion % TOTAL_QUESTIONS) + 1;
+            log(`➡️ Moved to Question ${currentQuestion}`);
+        }
+
+        function resetAll() {
+            for (var i = 1; i <= TOTAL_QUESTIONS; i++) {
+                data[i] = { marked: null, status: NOT_MARKED };
+            }
+            currentQuestion = 1;
+            renderQuestionGrid();
+            updateQuestionCounter();
+            log('🔄 All questions reset');
+        }
+
+        // Logger
+        function log(message) {
+            const logPanel = document.getElementById('log-panel');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logPanel.insertBefore(entry, logPanel.firstChild);
+            
+            // Keep only last 50 entries
+            while (logPanel.children.length > 50) {
+                logPanel.removeChild(logPanel.lastChild);
+            }
+        }
+
+        // Helper functions for console testing
+        window.getAnsweredCount = function() {
+            let count = 0;
+            for (var i = 1; i <= nos.length; i++) {
+                if (data[i] && (data[i].marked !== null || 
+                    data[i].status === SUBMITTED || 
+                    data[i].status === SUBMITTED_BOOKMARKED)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        window.getNotAnsweredCount = function() {
+            return nos.length - getAnsweredCount();
+        }
+
+        window.getBookmarkedCount = function() {
+            let count = 0;
+            for (var i = 1; i <= nos.length; i++) {
+                if (data[i] && (data[i].status === BOOKMARKED || 
+                    data[i].status === SUBMITTED_BOOKMARKED ||
+                    data[i].status === MARKED_BOOKMARKED)) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        // Start the demo
+        init();
+    </script>
+</body>
+</html>
