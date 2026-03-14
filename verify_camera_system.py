@@ -3,7 +3,7 @@
 NocheatZone - System Verification Script
 Checks that all components are properly configured for live camera monitoring
 """
-
+ 
 import os
 import sys
 import json
