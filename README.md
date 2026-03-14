@@ -12,7 +12,7 @@ https://pjreddie.com/media/files/yolov3.weights
 2) System allows only one login per user, so that user can’t do any unfair means.
 3) System will verify image of user at every time of login and also in exam using face recognition technology.
 
-
+ 
 # B) Professor 
 1) Using AI , professor can generate questions & answers, the 2 types of questions & answer can be generated: objective & subjective.
 2) Professor can create exam, view exam history, share details of exam with students, view questions, update, delete questions, but update & delete questions will not work at the time of exam & after the exam.
